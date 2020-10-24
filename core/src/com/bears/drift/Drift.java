@@ -16,7 +16,7 @@ public class Drift extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		screenSizeX = 1024; screenSizeY = 1024;
+		screenSizeX = 1280; screenSizeY = 1024;
 		centerX = screenSizeX/2; centerY = screenSizeY/2;
 		Gdx.graphics.setWindowedMode(screenSizeX, screenSizeY);
 		this.setScreen(new GameScreen(this));

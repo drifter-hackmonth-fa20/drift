@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        car.update();
+        car.update(delta);
         car.render();
         game.batch.end();
     }

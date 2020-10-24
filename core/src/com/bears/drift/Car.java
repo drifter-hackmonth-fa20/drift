@@ -24,43 +24,37 @@ public class Car extends Sprite {
         this.angularVelocity = 0;
         this.velocityX = 0;
         this.velocityY = 0;
-        this.power = 0.05;
-        this.turnSpeed = 0.002;
+        this.power = 4;
+        this.turnSpeed = .2;
     }
 
     public void render() {
         draw(game.batch);
     }
 
-    public void update() {
+    public void update(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            angularVelocity += turnSpeed;
+            angularVelocity += turnSpeed * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            angularVelocity -= turnSpeed;
+            angularVelocity -= turnSpeed * delta;
         }
         angle += angularVelocity;
+        setRotation((float) Math.toDegrees(angle));
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            velocityX -= Math.sin(angle) * power;
-            velocityY += Math.cos(angle) * power;
+            velocityX -= Math.sin(angle) * power * delta;
+            velocityY += Math.cos(angle) * power * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            velocityX += Math.sin(angle) * power/4;
-            velocityY -= Math.cos(angle) * power/4;
+            velocityX += Math.sin(angle) * power/4 * delta;
+            velocityY -= Math.cos(angle) * power/4 * delta;
         }
         translate(velocityX, velocityY);
 
-//        velocityX *= 0.985;
-//        velocityY *= 0.985;
-//        angularVelocity *= 0.98;
-        velocityX *= 0.985;
-        velocityY *= 0.985;
         double speed = Math.sqrt(Math.pow(velocityX, 2) + Math.pow(velocityY, 2));
-        System.out.println(.5+(speed/(speed+.25))/2);
-        angularVelocity *= Math.min(.5+(speed/(speed+.25))/2, 1);
-
-
-        setRotation((float) Math.toDegrees(angle));
+        angularVelocity *= Math.pow(Math.E, delta * (-30/(3*speed+2)));
+        velocityX *= Math.pow(Math.E, delta * -1.2);
+        velocityY *= Math.pow(Math.E, delta * -1.2);
     }
 }
