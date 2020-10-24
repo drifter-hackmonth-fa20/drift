@@ -20,7 +20,7 @@ public class GameScreen implements Screen {
         Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
         pixmap.setColor(153/255f, 255/255f, 153/255f, 255/255f);
         pixmap.fillRectangle(2, 0, 6, 10);
-        car = new Car(game, new Texture(pixmap));
+        car = new Car(game, new Texture(pixmap), true);
 
         camera = new OrthographicCamera(game.screenSizeX, game.screenSizeY);
         stage = new Stage(new FitViewport(game.screenSizeX, game.screenSizeY, camera));
@@ -34,8 +34,9 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        game.batch.begin();
         doPhysicsStep(delta);
+
+        game.batch.begin();
         car.render();
         game.batch.end();
     }
@@ -46,7 +47,7 @@ public class GameScreen implements Screen {
         float frameTime = Math.min(deltaTime, 0.25f);
         accumulator += frameTime;
         while (accumulator >= Constants.TIME_STEP) {
-            for (int i = 0; i < Constants.speed; i++) {
+            for (int i = 0; i < Constants.SPEED; i++) {
                 car.update(Constants.TIME_STEP);
             }
             accumulator -= Constants.TIME_STEP;

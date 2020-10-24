@@ -6,5 +6,5 @@ public class Constants {
     static double TURNSPEED = .2;
     static double ANGULARFRICTION = .1;
     static double VELOCITYFRICTION = .3;
-    static int speed = 1;
+    static int SPEED = 1;
 }

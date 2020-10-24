@@ -11,8 +11,9 @@ public class Car extends Sprite {
     private float velocityY;
     private float angle;
     private float angularVelocity;
+    private boolean controllable;
 
-    public Car(final Drift game, Texture texture) {
+    public Car(final Drift game, Texture texture, boolean controllable) {
         super(texture);
         setSize(20, 20);
         setPosition(game.screenSizeX/2, game.screenSizeY/2);
@@ -22,6 +23,7 @@ public class Car extends Sprite {
         this.angularVelocity = 0;
         this.velocityX = 0;
         this.velocityY = 0;
+        this.controllable = controllable;
     }
 
     public void render() {
@@ -47,22 +49,50 @@ public class Car extends Sprite {
     }
 
     private void updateAngularVelocity() {
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            angularVelocity += Constants.TURNSPEED;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            angularVelocity -= Constants.TURNSPEED;
+        if (controllable) {
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                angularVelocity += Constants.TURNSPEED;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                angularVelocity -= Constants.TURNSPEED;
+            }
+        } else {
+            int input = getAngularVelocityInput();
+            if (input == -1) {
+                angularVelocity += Constants.TURNSPEED;
+            } else if (input == 1) {
+                angularVelocity -= Constants.TURNSPEED;
+            }
         }
     }
 
     private void updateVelocity() {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            velocityX -= Math.sin(angle) * Constants.POWER;
-            velocityY += Math.cos(angle) * Constants.POWER;
+        if (controllable) {
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                velocityX -= Math.sin(angle) * Constants.POWER;
+                velocityY += Math.cos(angle) * Constants.POWER;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                velocityX += Math.sin(angle) * Constants.POWER/4;
+                velocityY -= Math.cos(angle) * Constants.POWER/4;
+            }
+        } else {
+            int input = getVelocityInput();
+            if (input == 1) {
+                velocityX -= Math.sin(angle) * Constants.POWER;
+                velocityY += Math.cos(angle) * Constants.POWER;
+            } else if (input == -1){
+                velocityX += Math.sin(angle) * Constants.POWER/4;
+                velocityY -= Math.cos(angle) * Constants.POWER/4;
+            }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            velocityX += Math.sin(angle) * Constants.POWER/4;
-            velocityY -= Math.cos(angle) * Constants.POWER/4;
-        }
+    }
+
+    private int getAngularVelocityInput() {
+        return -1;
+    }
+
+    private int getVelocityInput() {
+        return 1;
     }
 }
