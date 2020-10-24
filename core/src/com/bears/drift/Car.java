@@ -11,8 +11,6 @@ public class Car extends Sprite {
     private float velocityY;
     private float angle;
     private float angularVelocity;
-    private double power;
-    private double turnSpeed;
 
     public Car(final Drift game, Texture texture) {
         super(texture);
@@ -24,8 +22,6 @@ public class Car extends Sprite {
         this.angularVelocity = 0;
         this.velocityX = 0;
         this.velocityY = 0;
-        this.power = 4;
-        this.turnSpeed = .2;
     }
 
     public void render() {
@@ -33,28 +29,38 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
+
+        updateAngularVelocity();
+        updateVelocity();
+
+        double frictionFactor = Math.pow(Constants.VELOCITYFRICTION, delta);
+        translate((float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION)), (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION)));
+        velocityX *= frictionFactor;
+        velocityY *= frictionFactor;
+
+        frictionFactor = Math.pow(Constants.ANGULARFRICTION, delta);
+        angle += angularVelocity * (frictionFactor - 1)/Math.log(Constants.ANGULARFRICTION);
+        angularVelocity *= frictionFactor;
+        setRotation((float) Math.toDegrees(angle));
+    }
+
+    private void updateAngularVelocity() {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            angularVelocity += turnSpeed * delta;
+            angularVelocity += Constants.TURNSPEED;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            angularVelocity -= turnSpeed * delta;
+            angularVelocity -= Constants.TURNSPEED;
         }
-        angle += angularVelocity;
-        setRotation((float) Math.toDegrees(angle));
+    }
 
+    private void updateVelocity() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            velocityX -= Math.sin(angle) * power * delta;
-            velocityY += Math.cos(angle) * power * delta;
+            velocityX -= Math.sin(angle) * Constants.POWER;
+            velocityY += Math.cos(angle) * Constants.POWER;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            velocityX += Math.sin(angle) * power/4 * delta;
-            velocityY -= Math.cos(angle) * power/4 * delta;
+            velocityX += Math.sin(angle) * Constants.POWER/4;
+            velocityY -= Math.cos(angle) * Constants.POWER/4;
         }
-        translate(velocityX, velocityY);
-
-        double speed = Math.sqrt(Math.pow(velocityX, 2) + Math.pow(velocityY, 2));
-        angularVelocity *= Math.pow(Math.E, delta * (-30/(3*speed+2)));
-        velocityX *= Math.pow(Math.E, delta * -1.2);
-        velocityY *= Math.pow(Math.E, delta * -1.2);
     }
 }

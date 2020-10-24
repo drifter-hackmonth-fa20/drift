@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -36,9 +35,22 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        car.update(delta);
+        doPhysicsStep(delta);
         car.render();
         game.batch.end();
+    }
+
+    private float accumulator = 0;
+
+    private void doPhysicsStep(float deltaTime) {
+        float frameTime = Math.min(deltaTime, 0.25f);
+        accumulator += frameTime;
+        while (accumulator >= Constants.TIME_STEP) {
+            for (int i = 0; i < Constants.speed; i++) {
+                car.update(Constants.TIME_STEP);
+            }
+            accumulator -= Constants.TIME_STEP;
+        }
     }
 
     @Override
