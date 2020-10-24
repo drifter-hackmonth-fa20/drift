@@ -16,7 +16,7 @@ public class Car extends Sprite {
         super(texture);
         setSize(20, 20);
         setPosition(game.screenSizeX/2, game.screenSizeY/2);
-        setOriginCenter();
+        setOrigin(10, 2);
         this.game = game;
         this.angle = 0;
         this.angularVelocity = 0;
@@ -38,8 +38,10 @@ public class Car extends Sprite {
         velocityX *= frictionFactor;
         velocityY *= frictionFactor;
 
-        frictionFactor = Math.pow(Constants.ANGULARFRICTION, delta);
-        angle += angularVelocity * (frictionFactor - 1)/Math.log(Constants.ANGULARFRICTION);
+        double speed = Math.sqrt(Math.pow(velocityX, 2) + Math.pow(velocityY, 2));
+        double friction = ((Math.pow(speed,3))/200000000+.00000001);
+        frictionFactor = Math.pow(friction, delta);
+        angle += angularVelocity * (frictionFactor - 1)/Math.log(friction);
         angularVelocity *= frictionFactor;
         setRotation((float) Math.toDegrees(angle));
     }
