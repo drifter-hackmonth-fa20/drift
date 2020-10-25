@@ -9,18 +9,24 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.ArrayList;
+
 public class GameScreen implements Screen {
     final Drift game;
+    Track track;
     Stage stage;
     OrthographicCamera camera;
+    ArrayList<Car> cars;
     Car car;
 
     public GameScreen(final Drift game) {
         this.game = game;
-        Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
-        pixmap.setColor(153/255f, 255/255f, 153/255f, 255/255f);
-        pixmap.fillRectangle(2, 0, 6, 10);
-        car = new Car(game, new Texture(pixmap), true);
+
+        track = new Track(game);
+
+        cars = new ArrayList<>();
+        addCars(1, true);
+        resetCars(track.startx, track.starty, track.startAngle);
 
         camera = new OrthographicCamera(game.screenSizeX, game.screenSizeY);
         stage = new Stage(new FitViewport(game.screenSizeX, game.screenSizeY, camera));
@@ -37,7 +43,10 @@ public class GameScreen implements Screen {
         doPhysicsStep(delta);
 
         game.batch.begin();
-        car.render();
+        track.render();
+        for (Car car: cars) {
+            car.render();
+        }
         game.batch.end();
     }
 
@@ -48,9 +57,28 @@ public class GameScreen implements Screen {
         accumulator += frameTime;
         while (accumulator >= Constants.TIME_STEP) {
             for (int i = 0; i < Constants.SPEED; i++) {
-                car.update(Constants.TIME_STEP);
+                for (Car car: cars) {
+                    car.update(Constants.TIME_STEP);
+                }
             }
             accumulator -= Constants.TIME_STEP;
+        }
+    }
+
+    private void addCars(int numCars, boolean controllable) {
+        for (int i = 0; i < numCars; i++) {
+            Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
+            pixmap.setColor(153/255f, 255/255f, 153/255f, 255/255f);
+            pixmap.fillRectangle(2, 0, 6, 10);
+            car = new Car(game, new Texture(pixmap), controllable);
+            cars.add(car);
+        }
+    }
+
+    private void resetCars(int xpos, int ypos, int rotation) {
+        for (Car car: cars) {
+            car.setPosition(xpos, ypos);
+            car.setRotation(rotation);
         }
     }
 

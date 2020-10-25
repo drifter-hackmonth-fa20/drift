@@ -9,17 +9,14 @@ public class Car extends Sprite {
     final Drift game;
     private float velocityX;
     private float velocityY;
-    private float angle;
     private float angularVelocity;
     private boolean controllable;
 
     public Car(final Drift game, Texture texture, boolean controllable) {
         super(texture);
-        setSize(20, 20);
-        setPosition(game.screenSizeX/2, game.screenSizeY/2);
-        setOrigin(10, 2);
+        setSize(40, 40);
+        setOrigin(20, 5);
         this.game = game;
-        this.angle = 0;
         this.angularVelocity = 0;
         this.velocityX = 0;
         this.velocityY = 0;
@@ -43,9 +40,8 @@ public class Car extends Sprite {
         double speed = Math.sqrt(Math.pow(velocityX, 2) + Math.pow(velocityY, 2));
         double friction = ((Math.pow(speed,3))/200000000+.00000001);
         frictionFactor = Math.pow(friction, delta);
-        angle += angularVelocity * (frictionFactor - 1)/Math.log(friction);
+        rotate((float) Math.toDegrees(angularVelocity * (frictionFactor - 1)/Math.log(friction)));
         angularVelocity *= frictionFactor;
-        setRotation((float) Math.toDegrees(angle));
     }
 
     private void updateAngularVelocity() {
@@ -69,21 +65,21 @@ public class Car extends Sprite {
     private void updateVelocity() {
         if (controllable) {
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                velocityX -= Math.sin(angle) * Constants.POWER;
-                velocityY += Math.cos(angle) * Constants.POWER;
+                velocityX -= Math.sin(Math.toRadians(getRotation())) * Constants.POWER;
+                velocityY += Math.cos(Math.toRadians(getRotation())) * Constants.POWER;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                velocityX += Math.sin(angle) * Constants.POWER/4;
-                velocityY -= Math.cos(angle) * Constants.POWER/4;
+                velocityX += Math.sin(Math.toRadians(getRotation())) * Constants.POWER/4;
+                velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         } else {
             int input = getVelocityInput();
             if (input == 1) {
-                velocityX -= Math.sin(angle) * Constants.POWER;
-                velocityY += Math.cos(angle) * Constants.POWER;
+                velocityX -= Math.sin(Math.toRadians(getRotation())) * Constants.POWER;
+                velocityY += Math.cos(Math.toRadians(getRotation())) * Constants.POWER;
             } else if (input == -1){
-                velocityX += Math.sin(angle) * Constants.POWER/4;
-                velocityY -= Math.cos(angle) * Constants.POWER/4;
+                velocityX += Math.sin(Math.toRadians(getRotation())) * Constants.POWER/4;
+                velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         }
     }

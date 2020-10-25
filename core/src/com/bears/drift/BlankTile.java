@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class BlankTile extends Tile{
     public BlankTile() {
-        this.size = 128;
+        this.size = 280;
         Pixmap pixmap = new Pixmap(this.size, this.size, Pixmap.Format.RGBA8888);
         pixmap.setColor((float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random());
         pixmap.fillRectangle(0, 0, this.size, this.size);
