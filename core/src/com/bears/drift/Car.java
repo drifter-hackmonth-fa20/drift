@@ -28,7 +28,6 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
-
         updateAngularVelocity();
         updateVelocity();
 

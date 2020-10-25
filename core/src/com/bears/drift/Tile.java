@@ -6,4 +6,6 @@ public abstract class Tile {
     Boolean visible;
     Texture texture;
     int size;
+
+    abstract void fun();
 }

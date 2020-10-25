@@ -32,6 +32,8 @@ public class GameScreen implements Screen {
         stage = new Stage(new FitViewport(game.screenSizeX, game.screenSizeY, camera));
     }
 
+    int tileNum;
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -42,9 +44,16 @@ public class GameScreen implements Screen {
 
         doPhysicsStep(delta);
 
+
+
         game.batch.begin();
         track.render();
         for (Car car: cars) {
+            int num = track.getTileNum(car.getX()+car.getOriginX(), car.getY()+car.getOriginY());
+            if (num != tileNum) {
+                track.getTile(num).fun();
+                tileNum = num;
+            }
             car.render();
         }
         game.batch.end();
