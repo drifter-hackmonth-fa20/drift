@@ -44,8 +44,6 @@ public class GameScreen implements Screen {
 
         doPhysicsStep(delta);
 
-
-
         game.batch.begin();
         track.render();
         for (Car car: cars) {
@@ -77,7 +75,7 @@ public class GameScreen implements Screen {
     private void addCars(int numCars, boolean controllable) {
         for (int i = 0; i < numCars; i++) {
             Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
-            pixmap.setColor(153/255f, 255/255f, 153/255f, 255/255f);
+            pixmap.setColor(0/255f, 0/255f, 0/255f, 255/255f);
             pixmap.fillRectangle(2, 0, 6, 10);
             car = new Car(game, new Texture(pixmap), controllable);
             cars.add(car);
