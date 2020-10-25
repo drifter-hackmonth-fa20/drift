@@ -8,4 +8,7 @@ public abstract class Tile {
     int size;
 
     abstract void fun();
+
+    abstract int distanceToCurve1(int x, int y);
+    abstract int distanceToCurve2(int x, int y);
 }

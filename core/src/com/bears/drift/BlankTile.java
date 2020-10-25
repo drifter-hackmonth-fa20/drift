@@ -19,4 +19,10 @@ public class BlankTile extends Tile{
         pixmap.fillRectangle(0, 0, this.size, this.size);
         this.texture = new Texture(pixmap);
     }
+
+    @Override
+    int distanceToCurve1(int x, int y) {return 0;}
+
+    @Override
+    int distanceToCurve2(int x, int y) {return 0;}
 }
