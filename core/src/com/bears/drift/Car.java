@@ -6,17 +6,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Car extends Sprite {
-    final Drift game;
+    final GameScreen screen;
     private float velocityX;
     private float velocityY;
     private float angularVelocity;
     private boolean controllable;
 
-    public Car(final Drift game, Texture texture, boolean controllable) {
+    public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
         setSize(40, 40);
         setOrigin(20, 5);
-        this.game = game;
+        this.screen = screen;
         this.angularVelocity = 0;
         this.velocityX = 0;
         this.velocityY = 0;
@@ -24,7 +24,7 @@ public class Car extends Sprite {
     }
 
     public void render() {
-        draw(game.batch);
+        draw(screen.game.batch);
     }
 
     public void update(float delta) {
@@ -32,7 +32,14 @@ public class Car extends Sprite {
         updateVelocity();
 
         double frictionFactor = Math.pow(Constants.VELOCITYFRICTION, delta);
-        translate((float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION)), (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION)));
+        float deltaX = (float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
+        float deltaY =  (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
+
+        translate(deltaX, deltaY);
+        if (distanceToCurve1()<=Math.max(getOriginX(), getOriginY())
+                || distanceToCurve2()<=Math.max(getOriginX(), getOriginY())) {
+            translate(-deltaX-.01f, -deltaY-.01f);
+        }
         velocityX *= frictionFactor;
         velocityY *= frictionFactor;
 
@@ -89,5 +96,31 @@ public class Car extends Sprite {
 
     private int getVelocityInput() {
         return 1;
+    }
+
+    public float getCenterX() {
+        return getX()+getOriginX();
+    }
+
+    public float getCenterY() {
+        return getY()+getOriginY();
+    }
+
+    public Tile getTile() {
+        return screen.track.getTile(getCenterX(), getCenterY());
+    }
+
+    public float distanceToCurve1() {
+        Tile tile = getTile();
+        float x = getCenterX()%tile.size;
+        float y = getCenterY()%tile.size;
+        return tile.distanceToCurve1(x, y);
+    }
+
+    public float distanceToCurve2() {
+        Tile tile = getTile();
+        float x = getCenterX()%tile.size;
+        float y = getCenterY()%tile.size;
+        return tile.distanceToCurve2(x, y);
     }
 }
