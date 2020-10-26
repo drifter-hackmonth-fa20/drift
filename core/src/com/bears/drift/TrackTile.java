@@ -15,8 +15,21 @@ public class TrackTile extends Tile{
         loadTexture();
     }
 
+    /** Generate a texture based on the entrance and exit side. IE if the entrance is the bottom and the exit is the right, the texture is set to a 45 degree curve from the bottom to the right. */
     private void loadTexture() {
-        //TODO generate a texture based on the entrance and exit side. IE if the entrance is the bottom and the exit is the right, the texture is set to a 45 degree curve from the bottom to the right.
+        String s = getID();
+        if (s.equals("SN") || s.equals("NS")) {
+            this.texture = new Texture("vertical-tile.png");
+        } else if (s.equals("EW") || s.equals("WE")) {
+            this.texture = new Texture("horizontal-tile.png");
+        } else if (s.equals("SW") || s.equals("WS")) {
+            this.texture = new Texture("bottomleft-tile.png");
+        } else if (s.equals("WN") || s.equals("NW")) {
+            this.texture = new Texture("topleft-tile.png");
+        } else if (s.equals("NE") || s.equals("EN")) {
+            this.texture = new Texture("topright-tile.png");
+        } else
+            this.texture = new Texture("bottomright-tile.png");
     }
 
     /** Generate a unique id based on the entrance and exit side. */

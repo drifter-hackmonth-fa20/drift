@@ -19,7 +19,7 @@ public class Track {
         for (int i = 1; i < 5; i++) {
             tiles[0][i] = new TrackTile(1, 3);
         }
-        tiles[0][6] = new TrackTile(1, 2);
+        tiles[0][5] = new TrackTile(1, 2);
         for (int i = 1; i < 5; i++) {
             tiles[i][0] = new TrackTile(0, 2);
             tiles[i][5] = new TrackTile(0, 2);
