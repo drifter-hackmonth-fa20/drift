@@ -14,8 +14,8 @@ public class Car extends Sprite {
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
-        setSize(40, 40);
-        setOrigin(20, 5);
+        setSize(30, 30);
+        setOrigin(15, 4);
         this.screen = screen;
         this.angularVelocity = 0;
         this.velocityX = 0;
