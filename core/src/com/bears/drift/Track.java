@@ -32,6 +32,10 @@ public class Track {
         return tiles[tileNum%6][tileNum/6];
     }
 
+    public Tile getTile(float x, float y) {
+        return getTile(getTileNum(x, y));
+    }
+
     public int getTileNum(float x, float y) {
         return ((int)x)/280 + ((int)y)/280*6;
     }
