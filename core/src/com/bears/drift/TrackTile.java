@@ -71,7 +71,7 @@ public class TrackTile extends Tile{
         } else if (s.equals("WN") || s.equals("NW")) {
             return (float)(3*size/4) - (float)(Math.sqrt(x*x+(size-y)*(size-y)));
         } else if (s.equals("NE") || s.equals("EN")) {
-            return (float)(3*size/4) - (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)) - (float)(size/4));
+            return (float)(3*size/4) - (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)));
         } else
             return (float)(3*size/4) - (float)(Math.sqrt((size-x)*(size-x)+y*y));
     }
