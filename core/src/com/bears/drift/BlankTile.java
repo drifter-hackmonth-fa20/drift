@@ -21,8 +21,8 @@ public class BlankTile extends Tile{
     }
 
     @Override
-    float distanceToCurve1(float x, float y) {return 0;}
+    float distanceToCurve1(float x, float y) {return 280;}
 
     @Override
-    float distanceToCurve2(float x, float y) {return 0;}
+    float distanceToCurve2(float x, float y) {return 280;}
 }
