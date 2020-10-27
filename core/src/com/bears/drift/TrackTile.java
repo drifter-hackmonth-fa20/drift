@@ -45,17 +45,17 @@ public class TrackTile extends Tile{
     public float distanceToCurve1(float x, float y) {
         String s = getID();
         if (s.equals("SN") || s.equals("NS")) {
-            return x - (float)(size/4);
+            return x - (float)(size/8);
         } else if (s.equals("EW") || s.equals("WE")) {
-            return y - (float)(size/4);
+            return y - (float)(size/8);
         } else if (s.equals("SW") || s.equals("WS")) {
-            return (float)(Math.sqrt(x*x+y*y) - (float)(size/4));
+            return (float)(Math.sqrt(x*x+y*y) - (float)(size/8));
         } else if (s.equals("WN") || s.equals("NW")) {
-            return (float)(Math.sqrt(x*x+(size-y)*(size-y)) - (float)(size/4));
+            return (float)(Math.sqrt(x*x+(size-y)*(size-y)) - (float)(size/8));
         } else if (s.equals("NE") || s.equals("EN")) {
-            return (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)) - (float)(size/4));
+            return (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)) - (float)(size/8));
         } else
-            return (float)(Math.sqrt((size-x)*(size-x)+y*y) - (float)(size/4));
+            return (float)(Math.sqrt((size-x)*(size-x)+y*y) - (float)(size/8));
     }
 
     @Override
@@ -63,16 +63,16 @@ public class TrackTile extends Tile{
     public float distanceToCurve2(float x, float y) {
         String s = getID();
         if (s.equals("SN") || s.equals("NS")) {
-            return (float)(3*size/4) - x;
+            return (float)(7*size/8) - x;
         } else if (s.equals("EW") || s.equals("WE")) {
-            return (float)(3*size/4) - y;
+            return (float)(7*size/8) - y;
         } else if (s.equals("SW") || s.equals("WS")) {
-            return (float)(3*size/4) - (float)(Math.sqrt(x*x+y*y));
+            return (float)(7*size/8) - (float)(Math.sqrt(x*x+y*y));
         } else if (s.equals("WN") || s.equals("NW")) {
-            return (float)(3*size/4) - (float)(Math.sqrt(x*x+(size-y)*(size-y)));
+            return (float)(7*size/8) - (float)(Math.sqrt(x*x+(size-y)*(size-y)));
         } else if (s.equals("NE") || s.equals("EN")) {
-            return (float)(3*size/4) - (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)));
+            return (float)(7*size/8) - (float)(Math.sqrt((size-x)*(size-x)+(size-y)*(size-y)));
         } else
-            return (float)(3*size/4) - (float)(Math.sqrt((size-x)*(size-x)+y*y));
+            return (float)(7*size/8) - (float)(Math.sqrt((size-x)*(size-x)+y*y));
     }
 }
