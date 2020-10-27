@@ -15,9 +15,10 @@ public class Track {
     private static int[] dirX = {0, -1, 0, 1};
     private static int[] dirY = {-1, 0, 1, 0};
 
-    private static boolean works;
+    private boolean works;
 
     public Track(Drift game) {
+        System.out.println("-");
         this.game = game;
         startAngle = 0;
         tiles = new Tile[6][6];
@@ -45,10 +46,13 @@ public class Track {
         }*/
 
         /* Random track generation */
-
-        int starti = (int)(Math.random()*6);
-        int startj = (int)(Math.random()*6);
-        dfs(starti, startj, (int)(Math.random()*4));
+        failed = true;
+        while (failed) {
+            works = false; failed = false; depth = 0;
+            int starti = (int)(Math.random()*6);
+            int startj = (int)(Math.random()*6);
+            dfs(starti, startj, (int)(Math.random()*4));
+        }
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
@@ -101,7 +105,15 @@ public class Track {
         }
     }
 
+    private int depth = 0;
+    private boolean failed;
+
     private void dfs(int i, int j, int entry) {
+        depth++;
+        if (depth > 75) {
+            failed = true;
+            return;
+        }
         if (i < 0 || i > 5 || j < 0 || j > 5) return;
         if (tiles[i][j] != null) {
             if (((TrackTile) tiles[i][j]).entrance == entry) works = true;
@@ -112,7 +124,7 @@ public class Track {
             if (k == entry) continue;
             tiles[i][j] = new TrackTile(entry, k);
             dfs(i+dirY[k], j + dirX[k], (k + 2)%4);
-            if (works) {
+            if (works || failed) {
                 break;
             }
         }

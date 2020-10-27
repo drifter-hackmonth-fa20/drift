@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
+import java.util.ArrayList;
 
 public class Car extends Sprite {
     final GameScreen screen;
@@ -11,6 +15,8 @@ public class Car extends Sprite {
     private float velocityY;
     private float angularVelocity;
     private boolean controllable;
+    private NeuralNet net;
+    private RealMatrix prediction;
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
@@ -21,6 +27,9 @@ public class Car extends Sprite {
         this.velocityX = 0;
         this.velocityY = 0;
         this.controllable = controllable;
+        ArrayList<Integer> dim = new ArrayList<>();
+        dim.add(8); dim.add(64); dim.add(64); dim.add(4);
+        this.net = new NeuralNet(dim, true, "sigmoid");
     }
 
     public void render() {
@@ -28,6 +37,7 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
+        makePrediction();
         updateAngularVelocity();
         updateVelocity();
 
@@ -59,10 +69,9 @@ public class Car extends Sprite {
                 angularVelocity -= Constants.TURNSPEED;
             }
         } else {
-            int input = getAngularVelocityInput();
-            if (input == -1) {
+            if (prediction.getEntry(0, 2) > 0.5) {
                 angularVelocity += Constants.TURNSPEED;
-            } else if (input == 1) {
+            } else if (prediction.getEntry(0, 3) > 0.5) {
                 angularVelocity -= Constants.TURNSPEED;
             }
         }
@@ -79,23 +88,28 @@ public class Car extends Sprite {
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         } else {
-            int input = getVelocityInput();
-            if (input == 1) {
+            if (prediction.getEntry(0, 0) > 0.5) {
                 velocityX -= Math.sin(Math.toRadians(getRotation())) * Constants.POWER;
                 velocityY += Math.cos(Math.toRadians(getRotation())) * Constants.POWER;
-            } else if (input == -1){
+            } else if (prediction.getEntry(0, 1) > 0.5){
                 velocityX += Math.sin(Math.toRadians(getRotation())) * Constants.POWER/4;
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         }
     }
 
-    private int getAngularVelocityInput() {
-        return -1;
-    }
-
-    private int getVelocityInput() {
-        return 1;
+    private void makePrediction() {
+        double[][] data = new double[1][8];
+        data[0][0] = getCenterX()%280;
+        data[0][1] = getCenterY()%280;
+        data[0][2] = velocityX;
+        data[0][3] = velocityY;
+        data[0][4] = getRotation();
+        data[0][5] = angularVelocity;
+        data[0][6] = distanceToCurve1();
+        data[0][7] = distanceToCurve2();
+        RealMatrix inputs = MatrixUtils.createRealMatrix(data);
+        prediction = net.predict(inputs);
     }
 
     public float getCenterX() {
@@ -107,7 +121,7 @@ public class Car extends Sprite {
     }
 
     public Tile getTile() {
-        return screen.track.getTile(getCenterX(), getCenterY());
+        return screen.race.track.getTile(getCenterX(), getCenterY());
     }
 
     public float distanceToCurve1() {
