@@ -95,6 +95,23 @@ public class NeuralNet {
         });
     }
 
+    public static void relu(RealMatrix input) {
+        input.walkInOptimizedOrder(new RealMatrixChangingVisitor() {
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow
+                    , int startColumn, int endColumn) {}
+
+            @Override
+            public double visit(int row, int column, double value) {
+                if (value < 0) return 0;
+                return value;
+            }
+
+            @Override
+            public double end() {return 0;}
+        });
+    }
+
     public static void exp(RealMatrix input) {
         input.walkInOptimizedOrder(new RealMatrixChangingVisitor() {
             @Override
