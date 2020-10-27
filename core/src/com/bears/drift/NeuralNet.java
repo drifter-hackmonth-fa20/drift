@@ -50,7 +50,7 @@ public class NeuralNet {
             RealMatrix rowSums = copy.multiply(temp);
             for (int i = 0; i < copy.getColumnDimension(); i++)
                 for (int j = 0; j < rowSums.getRowDimension(); j++)
-                    copy.multiplyEntry(i, j, (float)(1/rowSums.getEntry(j, 0)));
+                    copy.multiplyEntry(j, i, (float)(1/rowSums.getEntry(j, 0)));
         }
         if (output.equals("sigmoid")) {
             copy = copy.scalarMultiply(-1);
@@ -76,7 +76,17 @@ public class NeuralNet {
                 X = np.clip(X, 0, np.inf)  # ReLU
         return X
          */
-        return null; //TODO
+        RealMatrix copy = input.copy();
+        for (int i = 0; i < this.layers.size(); i++) {
+            RealMatrix ones = MatrixUtils.createRealMatrix(new double[copy.getRowDimension()][1]);
+            for (int j = 0; j < copy.getRowDimension(); j++) ones.setEntry(j, 0, 1);
+            copy = copy.multiply(layers.get(i)).add(ones.multiply(this.biases.get(i)));
+            if (i == this.layers.size() - 1)
+                copy = output(copy);
+            else
+                relu(copy);
+        }
+        return copy;
     }
 
     public static void elementInverse(RealMatrix input) {
