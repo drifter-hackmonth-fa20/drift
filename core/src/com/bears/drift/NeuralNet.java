@@ -40,22 +40,22 @@ public class NeuralNet {
     }
 
     public RealMatrix output(RealMatrix input) {
-        /*
-        if output == 'softmax':
-            return lambda X : np.exp(X) / np.sum(np.exp(X), axis=1).reshape(-1, 1)
-        if output == 'sigmoid':
-            return lambda X : (1 / (1 + np.exp(-X)))
-        if output == 'linear':
-            return lambda X : X
-         */
+        //if (output.equals("softmax")
+            //return lambda X : np.exp(X) / np.sum(np.exp(X), axis=1).reshape(-1, 1)
         RealMatrix copy = input.copy();
         if (output.equals("softmax")) {
-
+            exp(copy);
+            RealMatrix temp = MatrixUtils.createRealMatrix(new double[copy.getColumnDimension()][1]);
+            for (int i = 0; i < copy.getColumnDimension(); i++) temp.setEntry(i, 0, 1);
+            RealMatrix rowSums = copy.multiply(temp);
+            for (int i = 0; i < copy.getColumnDimension(); i++)
+                for (int j = 0; j < rowSums.getRowDimension(); j++)
+                    copy.multiplyEntry(i, j, (float)(1/rowSums.getEntry(j, 0)));
         }
         if (output.equals("sigmoid")) {
-            copy.scalarMultiply(-1);
+            copy = copy.scalarMultiply(-1);
             exp(copy);
-            copy.scalarAdd(1);
+            copy = copy.scalarAdd(1);
             elementInverse(copy);
             return copy;
         }
