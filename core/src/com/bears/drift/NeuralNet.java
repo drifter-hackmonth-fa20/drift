@@ -1,9 +1,11 @@
 package com.bears.drift;
 
+import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealMatrixChangingVisitor;
 
 import java.util.ArrayList;
 
@@ -46,7 +48,18 @@ public class NeuralNet {
         if output == 'linear':
             return lambda X : X
          */
-        return null; //TODO
+        RealMatrix copy = input.copy();
+        if (output.equals("softmax")) {
+
+        }
+        if (output.equals("sigmoid")) {
+            copy.scalarMultiply(-1);
+            exp(copy);
+            copy.scalarAdd(1);
+            elementInverse(copy);
+            return copy;
+        }
+        return copy;
     }
 
     public RealMatrix predict(RealMatrix input) {
@@ -64,6 +77,39 @@ public class NeuralNet {
         return X
          */
         return null; //TODO
+    }
+
+    public static void elementInverse(RealMatrix input) {
+        input.walkInOptimizedOrder(new RealMatrixChangingVisitor() {
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow
+                    , int startColumn, int endColumn) {}
+
+            @Override
+            public double visit(int row, int column, double value) {
+                return 1/value;
+            }
+
+            @Override
+            public double end() {return 0;}
+        });
+    }
+
+    public static void exp(RealMatrix input) {
+        input.walkInOptimizedOrder(new RealMatrixChangingVisitor() {
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow
+                    , int startColumn, int endColumn) {}
+
+            @Override
+            public double visit(int row, int column, double value) {
+                Exp exp = new Exp();
+                return exp.value(value);
+            }
+
+            @Override
+            public double end() {return 0;}
+        });
     }
 
     public static RealMatrix RandomNormalMatrix(AbstractRealDistribution dist, int dimX, int dimY) {
