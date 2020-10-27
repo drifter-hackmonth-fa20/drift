@@ -3,6 +3,11 @@ package com.bears.drift;
 public class Track {
     public int startx;
     public int starty;
+    public boolean firstTile;
+    public int firstTileX;
+    public int firstTileY;
+    public int firstTileEntrance;
+    public int firstTileExit;
     public int startAngle;
     private Tile[][] tiles;
     Drift game;
@@ -14,10 +19,9 @@ public class Track {
 
     public Track(Drift game) {
         this.game = game;
-        startx = 150;
-        starty = 150;
-        startAngle = -45;
+        startAngle = 0;
         tiles = new Tile[6][6];
+        firstTile = true;
 
         /* Hardcoded track generation for testing purposes
         tiles[0][0] = new TrackTile(2, 3);
@@ -48,7 +52,51 @@ public class Track {
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                if (tiles[i][j] == null) tiles[i][j] = new BlankTile();
+                if (tiles[i][j] == null) {
+                    tiles[i][j] = new BlankTile();
+                } else if (firstTile) {
+                    firstTileX = j;
+                    firstTileY = i;
+                    firstTileEntrance = ((TrackTile) tiles[i][j]).entrance;
+                    firstTileExit = ((TrackTile) tiles[i][j]).exit;
+                    firstTile = false;
+                }
+            }
+        }
+
+        startx = 150 + firstTileX*280;
+        starty = 150 + firstTileY*280;
+        if (firstTileEntrance == 0) {
+            if (firstTileExit == 1) {
+                startAngle = -135;
+            } else if (firstTileExit == 2) {
+                startAngle = -90;
+            } else if (firstTileExit == 3) {
+                startAngle = -45;
+            }
+        } else if (firstTileEntrance == 1) {
+            if (firstTileExit == 0) {
+                startAngle = 45;
+            } else if (firstTileExit == 2) {
+                startAngle = -45;
+            } else if (firstTileExit == 3) {
+                startAngle = 0;
+            }
+        } else if (firstTileEntrance == 2) {
+            if (firstTileExit == 0) {
+                startAngle = 90;
+            } else if (firstTileExit == 1) {
+                startAngle = 135;
+            } else if (firstTileExit == 3) {
+                startAngle = 45;
+            }
+        } else if (firstTileEntrance == 3) {
+            if (firstTileExit == 0) {
+                startAngle = 135;
+            } else if (firstTileExit == 1) {
+                startAngle = -180;
+            } else if (firstTileExit == 2) {
+                startAngle = -135;
             }
         }
     }
