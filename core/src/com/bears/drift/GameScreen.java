@@ -1,6 +1,7 @@
 package com.bears.drift;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -32,6 +33,24 @@ public class GameScreen implements Screen {
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            race.begin();
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) Constants.SPEED = 1;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) Constants.SPEED = 2;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) Constants.SPEED = 3;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) Constants.SPEED = 4;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) Constants.SPEED = 5;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) Constants.SPEED = 6;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) Constants.SPEED = 7;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) Constants.SPEED = 8;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) Constants.SPEED = 9;
+
+        if (race.elapsedTime>Constants.RACESECONDS) {
+            race.end();
+        }
 
         game.batch.begin();
         race.render(delta);

@@ -33,19 +33,22 @@ public class Race {
         running = true;
     }
 
+    public void pause() {
+        running = !running;
+    }
+
     public void end() {
         running = false;
     }
 
     public void randomizeTrack() {
-                track = new Track(screen.game);
+        track = new Track(screen.game);
         resetCars(track.startx, track.starty, track.startAngle);
     }
 
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.TAB)) randomizeTrack();
         if (running) {
-            elapsedTime += delta;
+            elapsedTime += delta*Constants.SPEED;
             doPhysicsStep(delta);
         }
         track.render();
@@ -89,8 +92,7 @@ public class Race {
 
     private void resetCars(int xpos, int ypos, int rotation) {
         for (Car car: cars) {
-            car.setPosition(xpos, ypos);
-            car.setRotation(rotation);
+            car.reset(xpos, ypos, rotation);
         }
     }
 }

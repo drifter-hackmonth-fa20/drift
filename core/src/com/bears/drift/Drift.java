@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 public class Drift extends Game {
 	SpriteBatch batch;
-	Texture img;
 	int screenSizeX;
 	int screenSizeY;
 	int centerX;
@@ -44,6 +43,5 @@ public class Drift extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 }

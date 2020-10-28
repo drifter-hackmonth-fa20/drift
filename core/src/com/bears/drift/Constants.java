@@ -6,5 +6,5 @@ public class Constants {
     static double TURNSPEED = .2;
     static double VELOCITYFRICTION = .3;
     static int SPEED = 1;
-    static int RACESECONDS = 20;
+    static int RACESECONDS = 10;
 }

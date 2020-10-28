@@ -137,4 +137,12 @@ public class Car extends Sprite {
         float y = getCenterY()%tile.size;
         return tile.distanceToCurve2(x, y);
     }
+
+    public void reset(int xpos, int ypos, int rotation) {
+        setPosition(xpos, ypos);
+        setRotation(rotation);
+        velocityY = 0;
+        velocityX = 0;
+        angularVelocity = 0;
+    }
 }
