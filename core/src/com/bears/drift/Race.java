@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Race {
     GameScreen screen;
@@ -22,9 +23,8 @@ public class Race {
             numCars -= 1;
         }
         addAutomatedCars(numCars);
-        randomizeTrack();
-        elapsedTime = 0;
-        running = true;
+        track = new Track(screen.game);
+        begin();
     }
 
     public void begin() {
@@ -41,20 +41,38 @@ public class Race {
     public void end() {
         running = false;
         over = true;
+        evolve();
+        begin();
     }
 
     public void reset() {
         elapsedTime = 0;
+        if (over) running = true;
         over = false;
         resetCars(track.startx, track.starty, track.startAngle);
     }
 
     private void evolve() {
+        cars.sort(new Comparator<Car>() {
+            @Override
+            public int compare(Car car, Car t1) {
+                return t1.tilesTraversed - car.tilesTraversed;
+            }
+        });
 
+        ArrayList<Car> newCars = new ArrayList<>();
+        for (int i = 0; i < Constants.NUMCARS; i++) {
+            Car parent1 = cars.get(sampleExponential());
+            Car parent2 = cars.get(sampleExponential());
+            Car newCar = new Car(screen, parent1.getTexture(), false);
+            newCar.net = parent1.net.mate(parent2.net);
+            newCars.add(newCar);
+        }
+        cars = newCars;
     }
 
     private void randomizeTrack() {
-        track = new Track(screen.game);
+//        track = new Track(screen.game);
         resetCars(track.startx, track.starty, track.startAngle);
     }
 
@@ -70,7 +88,7 @@ public class Race {
     }
 
     private static int sampleExponential() {
-        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/20f);
+        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/30f);
         int s = (int) e.sample();
         while (s > Constants.NUMCARS) {
             s = (int) e.sample();

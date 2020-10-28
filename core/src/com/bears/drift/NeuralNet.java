@@ -80,22 +80,32 @@ public class NeuralNet {
     public NeuralNet mate(NeuralNet other) {
         NeuralNet child = new NeuralNet(this.dimensions, this.useBias, this.output);
         for (int i = 0; i < child.layers.size(); i++) {
-            RealMatrix pass_on = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
-            RealMatrix pass_on_opp = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
-            for (int j = 0; j < pass_on.getColumnDimension(); j++) {
-                boolean test = Math.random() < 0.5;
-                pass_on.setEntry(0, j, (test) ? 0 : 1);
-                pass_on_opp.setEntry(0, j, (test) ? 1 : 0);
+//            RealMatrix pass_on = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
+//            RealMatrix pass_on_opp = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
+//            for (int j = 0; j < pass_on.getColumnDimension(); j++) {
+//                boolean test = Math.random() < 0.5;
+//                pass_on.setEntry(0, j, (test) ? 0 : 1);
+//                pass_on_opp.setEntry(0, j, (test) ? 1 : 0);
+//            }
+//            System.out.println(pass_on.getRowDimension() + "," + pass_on.getColumnDimension());
+//            System.out.println(this.layers.get(i).getRowDimension() + "," + this.layers.get(i).getColumnDimension());
+//            child.layers.set(i, pass_on.multiply(this.layers.get(i)).add(pass_on_opp.multiply(other.layers.get(i))));
+//            child.biases.set(i, pass_on.multiply(this.biases.get(i)).add(pass_on_opp.multiply(other.biases.get(i))));
+            if (Math.random()<0.5) {
+                child.layers.set(i, this.layers.get(i));
+                child.biases.set(i, this.biases.get(i));
+            } else {
+                child.layers.set(i, other.layers.get(i));
+                child.biases.set(i, other.biases.get(i));
             }
-            child.layers.set(i, pass_on.multiply(this.layers.get(i)).add(pass_on_opp.multiply(other.layers.get(i))));
-            child.biases.set(i, pass_on.multiply(this.biases.get(i)).add(pass_on_opp.multiply(other.biases.get(i))));
+
         }
         child.mutate();
         return child;
     }
 
     private void mutate() {
-        float stdev = (float) 0.03;
+        float stdev = (float) 0.05;
         for (int i = 0; i < this.layers.size(); i++) {
             NormalDistribution dist = new NormalDistribution(0, stdev);
             RealMatrix normalL = RandomNormalMatrix(dist, this.layers.get(i).getRowDimension(), this.layers.get(i).getColumnDimension());

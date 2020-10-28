@@ -9,6 +9,7 @@ public class Track {
     public int firstTileEntrance;
     public int firstTileExit;
     public int startAngle;
+    public int length;
     private Tile[][] tiles;
     Drift game;
 
@@ -47,11 +48,13 @@ public class Track {
 
         /* Random track generation */
         failed = true;
+        int starti = 0;
+        int startj = 0;
         while (failed) {
-            works = false; failed = false; depth = 0;
-            int starti = (int)(Math.random()*6);
-            int startj = (int)(Math.random()*6);
-            dfs(starti, startj, (int)(Math.random()*4), 0);
+            works = false; failed = false; depth = 0; first = true; length = 0;
+            starti = 1;
+            startj = 1;
+            dfs(starti, startj, 0, 0);
         }
 
         for (int i = 0; i < 6; i++) {
@@ -59,56 +62,57 @@ public class Track {
                 if (tiles[i][j] == null) {
                     tiles[i][j] = new BlankTile();
                 } else if (firstTile) {
-                    firstTileX = j;
-                    firstTileY = i;
-                    firstTileEntrance = ((TrackTile) tiles[i][j]).entrance;
-                    firstTileExit = ((TrackTile) tiles[i][j]).exit;
+                    firstTileX = startj;
+                    firstTileY = starti;
+                    firstTileEntrance = ((TrackTile) tiles[starti][startj]).entrance;
+                    firstTileExit = ((TrackTile) tiles[starti][startj]).exit;
                     firstTile = false;
                 }
-                System.out.print(getTileOrder(j*280, i*280)+" ");
             }
-            System.out.println();
         }
 
-        startx = 150 + firstTileX*280;
-        starty = 150 + firstTileY*280;
-        if (firstTileEntrance == 0) {
-            if (firstTileExit == 1) {
-                startAngle = -135;
-            } else if (firstTileExit == 2) {
-                startAngle = -90;
-            } else if (firstTileExit == 3) {
-                startAngle = -45;
-            }
-        } else if (firstTileEntrance == 1) {
-            if (firstTileExit == 0) {
-                startAngle = 45;
-            } else if (firstTileExit == 2) {
-                startAngle = -45;
-            } else if (firstTileExit == 3) {
-                startAngle = 0;
-            }
-        } else if (firstTileEntrance == 2) {
-            if (firstTileExit == 0) {
-                startAngle = 90;
-            } else if (firstTileExit == 1) {
-                startAngle = 135;
-            } else if (firstTileExit == 3) {
-                startAngle = 45;
-            }
-        } else if (firstTileEntrance == 3) {
-            if (firstTileExit == 0) {
-                startAngle = 135;
-            } else if (firstTileExit == 1) {
-                startAngle = -180;
-            } else if (firstTileExit == 2) {
-                startAngle = -135;
-            }
-        }
+
+        startx = 130 + 1*280;
+        starty = 130 + 1*280;
+        startAngle = 0;
+//        if (firstTileEntrance == 0) {
+//            if (firstTileExit == 1) {
+//                startAngle = 180;
+//            } else if (firstTileExit == 2) {
+//                startAngle = 0;
+//            } else if (firstTileExit == 3) {
+//                startAngle = -180;
+//            }
+//        } else if (firstTileEntrance == 1) {
+//            if (firstTileExit == 0) {
+//                startAngle = -45;
+//            } else if (firstTileExit == 2) {
+//                startAngle = 45;
+//            } else if (firstTileExit == 3) {
+//                startAngle = -0;
+//            }
+//        } else if (firstTileEntrance == 2) {
+//            if (firstTileExit == 0) {
+//                startAngle = -90;
+//            } else if (firstTileExit == 1) {
+//                startAngle = -135;
+//            } else if (firstTileExit == 3) {
+//                startAngle = -45;
+//            }
+//        } else if (firstTileEntrance == 3) {
+//            if (firstTileExit == 0) {
+//                startAngle = -135;
+//            } else if (firstTileExit == 1) {
+//                startAngle = 180;
+//            } else if (firstTileExit == 2) {
+//                startAngle = 135;
+//            }
+//        }
     }
 
     private int depth = 0;
     private boolean failed;
+    private boolean first;
 
     private void dfs(int i, int j, int entry, int order) {
         depth++;
@@ -121,12 +125,18 @@ public class Track {
             if (((TrackTile) tiles[i][j]).entrance == entry) works = true;
             return;
         }
-        int randomDir = (int)(Math.random()*4);
+        int randomDir;
+        if (first) {
+            randomDir = 2;
+            first = false;
+        }
+        else randomDir = (int)(Math.random()*4);
         for (int k = randomDir, counter = 0; counter < 4; k = (k+1)%4, counter++) {
             if (k == entry) continue;
             tiles[i][j] = new TrackTile(entry, k, order);
             dfs(i+dirY[k], j + dirX[k], (k + 2)%4, order + 1);
             if (works || failed) {
+                if (order>length) length = order;
                 break;
             }
         }

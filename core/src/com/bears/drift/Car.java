@@ -16,8 +16,9 @@ public class Car extends Sprite {
     private float velocityY;
     private float angularVelocity;
     private boolean controllable;
-    private NeuralNet net;
+    public NeuralNet net;
     private RealMatrix prediction;
+    public int tilesTraversed;
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
@@ -29,7 +30,7 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(8); dim.add(64); dim.add(64); dim.add(4);
+        dim.add(9); dim.add(64); dim.add(64); dim.add(4);
         this.net = new NeuralNet(dim, true, "sigmoid");
     }
 
@@ -38,6 +39,7 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
+        int startingSquare = screen.race.track.getTileOrder(getCenterX(), getCenterY());
         makePrediction();
         updateAngularVelocity();
         updateVelocity();
@@ -46,10 +48,11 @@ public class Car extends Sprite {
         float deltaX = (float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
         float deltaY =  (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
 
-        translate(deltaX, deltaY);
-        if (distanceToCurve1()<=Math.max(getOriginX(), getOriginY())
-                || distanceToCurve2()<=Math.max(getOriginX(), getOriginY())) {
-            translate(-deltaX-.01f, -deltaY-.01f);
+//        translate(deltaX, deltaY);
+        if (distanceToCurve1()>=Math.max(getOriginX(), getOriginY())
+                && distanceToCurve2()>=Math.max(getOriginX(), getOriginY())) {
+//            translate(-deltaX-.01f, -deltaY-.01f);
+            translate(deltaX, deltaY);
         }
         velocityX *= frictionFactor;
         velocityY *= frictionFactor;
@@ -59,6 +62,11 @@ public class Car extends Sprite {
         frictionFactor = Math.pow(friction, delta);
         rotate((float) Math.toDegrees(angularVelocity * (frictionFactor - 1)/Math.log(friction)));
         angularVelocity *= frictionFactor;
+        int endingSquare = screen.race.track.getTileOrder(getCenterX(), getCenterY());
+        if (startingSquare == 0 && endingSquare == screen.race.track.length) tilesTraversed--;
+        else if (startingSquare == screen.race.track.length && endingSquare == 0) tilesTraversed++;
+        else if (startingSquare>endingSquare) tilesTraversed--;
+        else if (startingSquare<endingSquare) tilesTraversed++;
     }
 
     private void updateAngularVelocity() {
@@ -100,12 +108,13 @@ public class Car extends Sprite {
     }
 
     private void makePrediction() {
-        double[][] data = new double[1][8];
+        double[][] data = new double[1][9];
         double[] predictions = new double[]{
                 getCenterX()%280-140, getCenterY()%280-140,
                 velocityX, velocityY,
                 getRotation()%360-180, angularVelocity,
-                distanceToCurve1(), distanceToCurve2()
+                distanceToCurve1(), distanceToCurve2(),
+                ((TrackTile) getTile()).getNum()
         };
         predictions = normalize(predictions);
         data[0][0] = predictions[0];
@@ -116,6 +125,7 @@ public class Car extends Sprite {
         data[0][5] = predictions[5];
         data[0][6] = predictions[6];
         data[0][7] = predictions[7];
+        data[0][8] = predictions[8];
         RealMatrix inputs = MatrixUtils.createRealMatrix(data);
         prediction = net.predict(inputs);
     }
@@ -123,7 +133,7 @@ public class Car extends Sprite {
     public static double[] normalize(double[] data) {
         double[] norm = new double[data.length];
         for (int i = 0; i < data.length; i++) {
-            norm[i] = ((data[i] - Constants.INPUTMIN)/(Constants.INPUTMAX - Constants.INPUTMIN)-0.5)*20;
+            norm[i] = ((data[i] - Constants.INPUTMIN)/(Constants.INPUTMAX - Constants.INPUTMIN)-0.5)*10;
         }
         return norm;
     }
@@ -160,5 +170,6 @@ public class Car extends Sprite {
         velocityY = 0;
         velocityX = 0;
         angularVelocity = 0;
+        tilesTraversed = 0;
     }
 }

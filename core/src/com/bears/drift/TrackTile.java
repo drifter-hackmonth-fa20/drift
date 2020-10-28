@@ -41,6 +41,10 @@ public class TrackTile extends Tile{
         return dir[entrance]+dir[exit];
     }
 
+    public int getNum() {
+        return entrance*10+exit*3;
+    }
+
     @Override
     void fun() {}
 
