@@ -19,6 +19,8 @@ public class Car extends Sprite {
     public NeuralNet net;
     private RealMatrix prediction;
     public int tilesTraversed;
+    public Tile tile;
+    public boolean dead;
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
@@ -30,7 +32,7 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(9); dim.add(64); dim.add(64); dim.add(4);
+        dim.add(9); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(4);
         this.net = new NeuralNet(dim, true, "sigmoid");
     }
 
@@ -39,7 +41,9 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
+        getTile();
         int startingSquare = screen.race.track.getTileOrder(getCenterX(), getCenterY());
+
         makePrediction();
         updateAngularVelocity();
         updateVelocity();
@@ -48,11 +52,11 @@ public class Car extends Sprite {
         float deltaX = (float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
         float deltaY =  (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
 
-//        translate(deltaX, deltaY);
-        if (distanceToCurve1()>=Math.max(getOriginX(), getOriginY())
-                && distanceToCurve2()>=Math.max(getOriginX(), getOriginY())) {
-//            translate(-deltaX-.01f, -deltaY-.01f);
+        if (distanceToCurve1()>=0
+                && distanceToCurve2()>=0) {
             translate(deltaX, deltaY);
+        } else {
+            dead = true;
         }
         velocityX *= frictionFactor;
         velocityY *= frictionFactor;
@@ -62,7 +66,11 @@ public class Car extends Sprite {
         frictionFactor = Math.pow(friction, delta);
         rotate((float) Math.toDegrees(angularVelocity * (frictionFactor - 1)/Math.log(friction)));
         angularVelocity *= frictionFactor;
-        int endingSquare = screen.race.track.getTileOrder(getCenterX(), getCenterY());
+
+        updateTilesTraversed(startingSquare, screen.race.track.getTileOrder(getCenterX(), getCenterY()));
+    }
+
+    private void updateTilesTraversed(int startingSquare, int endingSquare) {
         if (startingSquare == 0 && endingSquare == screen.race.track.length) tilesTraversed--;
         else if (startingSquare == screen.race.track.length && endingSquare == 0) tilesTraversed++;
         else if (startingSquare>endingSquare) tilesTraversed--;
@@ -113,8 +121,8 @@ public class Car extends Sprite {
                 getCenterX()%280-140, getCenterY()%280-140,
                 velocityX, velocityY,
                 getRotation()%360-180, angularVelocity,
-                distanceToCurve1(), distanceToCurve2(),
-                ((TrackTile) getTile()).getNum()
+                180-distanceToCurve1(), 180-distanceToCurve2(),
+                tile.getNum() //might be causing track memorization
         };
         predictions = normalize(predictions);
         data[0][0] = predictions[0];
@@ -146,22 +154,20 @@ public class Car extends Sprite {
         return getY()+getOriginY();
     }
 
-    public Tile getTile() {
-        return screen.race.track.getTile(getCenterX(), getCenterY());
+    public void getTile() {
+        tile = screen.race.track.getTile(getCenterX(), getCenterY());
     }
 
     public float distanceToCurve1() {
-        Tile tile = getTile();
         float x = getCenterX()%tile.size;
         float y = getCenterY()%tile.size;
-        return tile.distanceToCurve1(x, y);
+        return tile.distanceToCurve1(x, y)-getOriginX();
     }
 
     public float distanceToCurve2() {
-        Tile tile = getTile();
         float x = getCenterX()%tile.size;
         float y = getCenterY()%tile.size;
-        return tile.distanceToCurve2(x, y);
+        return tile.distanceToCurve2(x, y)-getOriginX();
     }
 
     public void reset(int xpos, int ypos, int rotation) {
@@ -171,5 +177,10 @@ public class Car extends Sprite {
         velocityX = 0;
         angularVelocity = 0;
         tilesTraversed = 0;
+        dead = false;
+    }
+
+    public int getScore() {
+        return (int) (tilesTraversed*280+tile.distanceTraveled(getCenterX()%280, getCenterY()%280));
     }
 }

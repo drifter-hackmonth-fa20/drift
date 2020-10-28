@@ -12,4 +12,6 @@ public abstract class Tile {
 
     abstract float distanceToCurve1(float x, float y);
     abstract float distanceToCurve2(float x, float y);
+    abstract float distanceTraveled(float x, float y);
+    abstract int getNum();
 }

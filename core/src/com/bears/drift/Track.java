@@ -19,12 +19,8 @@ public class Track {
     private boolean works;
 
     public Track(Drift game) {
-        System.out.println("-");
         this.game = game;
-        startAngle = 0;
-        tiles = new Tile[6][6];
-        firstTile = true;
-
+        randomizeTiles();
         /* Hardcoded track generation for testing purposes
         tiles[0][0] = new TrackTile(2, 3);
         for (int i = 1; i < 5; i++) {
@@ -47,34 +43,7 @@ public class Track {
         }*/
 
         /* Random track generation */
-        failed = true;
-        int starti = 0;
-        int startj = 0;
-        while (failed) {
-            works = false; failed = false; depth = 0; first = true; length = 0;
-            starti = 1;
-            startj = 1;
-            dfs(starti, startj, 0, 0);
-        }
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (tiles[i][j] == null) {
-                    tiles[i][j] = new BlankTile();
-                } else if (firstTile) {
-                    firstTileX = startj;
-                    firstTileY = starti;
-                    firstTileEntrance = ((TrackTile) tiles[starti][startj]).entrance;
-                    firstTileExit = ((TrackTile) tiles[starti][startj]).exit;
-                    firstTile = false;
-                }
-            }
-        }
-
-
-        startx = 130 + 1*280;
-        starty = 130 + 1*280;
-        startAngle = 0;
 //        if (firstTileEntrance == 0) {
 //            if (firstTileExit == 1) {
 //                startAngle = 180;
@@ -108,6 +77,39 @@ public class Track {
 //                startAngle = 135;
 //            }
 //        }
+    }
+
+    public void randomizeTiles() {
+        tiles = new Tile[6][6];
+        firstTile = true;
+        failed = true;
+        int starti = 0;
+        int startj = 0;
+        while (failed) {
+            works = false; failed = false; depth = 0; first = true; length = 0;
+            starti = 1;
+            startj = 1;
+            dfs(starti, startj, 0, 0);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (tiles[i][j] == null) {
+                    tiles[i][j] = new BlankTile();
+                } else if (firstTile) {
+                    firstTileX = startj;
+                    firstTileY = starti;
+                    firstTileEntrance = ((TrackTile) tiles[starti][startj]).entrance;
+                    firstTileExit = ((TrackTile) tiles[starti][startj]).exit;
+                    firstTile = false;
+                }
+            }
+        }
+
+
+        startx = 130 + 1*280;
+        starty = 130 + 1*280;
+        startAngle = 0;
     }
 
     private int depth = 0;

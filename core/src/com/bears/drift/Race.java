@@ -56,7 +56,7 @@ public class Race {
         cars.sort(new Comparator<Car>() {
             @Override
             public int compare(Car car, Car t1) {
-                return t1.tilesTraversed - car.tilesTraversed;
+                return t1.getScore() - car.getScore();
             }
         });
 
@@ -72,9 +72,11 @@ public class Race {
     }
 
     private void randomizeTrack() {
-//        track = new Track(screen.game);
+        track.randomizeTiles();
         resetCars(track.startx, track.starty, track.startAngle);
     }
+
+    public boolean dead;
 
     public void render(float delta) {
         if (running) {
@@ -82,13 +84,17 @@ public class Race {
             doPhysicsStep(delta);
         }
         track.render();
+        dead = true;
         for (Car car: cars) {
             car.render();
+            if (!car.dead) {
+                dead = false;
+            }
         }
     }
 
     private static int sampleExponential() {
-        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/30f);
+        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/15f);
         int s = (int) e.sample();
         while (s > Constants.NUMCARS) {
             s = (int) e.sample();

@@ -100,51 +100,36 @@ public class TrackTile extends Tile{
         } else if (s.equals("SW")) {
             centerX = 0;
             centerY = 0;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians = (x - centerX) / radius;
-            return (float) (radians / (Math.PI/2)) * 280;
+            return (float) Math.atan((y-centerY)/(x-centerX))*170;
         } else if (s.equals("WS")) {
             centerX = 0;
             centerY = 0;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians = (x - centerX) / radius;
-            return (float) (((Math.PI/2)-radians) / (Math.PI/2)) * 280;
+            return (float) Math.atan((x-centerX)/(y-centerY))*170;
         } else if (s.equals("SE")) {
             centerX = 280;
             centerY = 0;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians = (y - centerY) / radius;
-            return (float) ((Math.PI/2 - (radians-(Math.PI/2))) / (Math.PI/2)) * 280;
+            return (float) Math.atan((y-centerY)/(centerX-x))*170;
         } else if (s.equals("ES")) {
             centerX = 280;
             centerY = 0;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians = (y - centerY) / radius;
-            return (float) ((radians-(Math.PI/2)) / (Math.PI/2)) * 280;
+            return (float) Math.atan((centerX-x)/(y-centerY))*170;
         } else if (s.equals("NE")) {
             centerX = 280;
             centerY = 280;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians  = (x - centerX) / radius;
-            return (float) ((radians + Math.PI) / (Math.PI/2)) * 280;
+            return (float) Math.atan((centerY-y)/(centerX-x))*170;
         } else if (s.equals("EN")) {
             centerX = 280;
             centerY = 280;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians  = (x - centerX) / radius;
-            return (float) (((Math.PI/2)-(radians + Math.PI)) / (Math.PI/2)) * 280;
+            return (float) Math.atan((centerX-x)/(centerY-y))*170;
         } else if (s.equals("NW")) {
             centerX = 0;
             centerY = 280;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians  = (x - centerX) / radius;
-            return (float) ((Math.PI/2) - (radians - ((3*Math.PI)/2)) / (Math.PI/2)) * 280;
+            return (float) Math.atan((centerY-y)/(x-centerX))*170;
         } else if (s.equals("WN")) {
             centerX = 0;
             centerY = 280;
-            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-            radians  = (x - centerX) / radius;
-            return (float) (((radians - ((3*Math.PI)/2))) / (Math.PI/2)) * 280;
+            return (float) Math.atan((x-centerX)/(centerY-y))*170;
         }
+        return 0;
     }
 }

@@ -34,6 +34,10 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
+        if ((race.elapsedTime>Constants.RACESECONDS && !race.over) || race.dead) {
+            race.end();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             race.begin();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
@@ -51,11 +55,6 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) Constants.SPEED = 7;
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) Constants.SPEED = 8;
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) Constants.SPEED = 9;
-
-        if (race.elapsedTime>Constants.RACESECONDS && !race.over) {
-            System.out.println("end");
-            race.end();
-        }
 
         game.batch.begin();
         race.render(delta);
