@@ -22,7 +22,7 @@ public class NeuralNet {
         this.output = output;
 
         NormalDistribution dist;
-        for (int i = 0; i < dimensions.size(); i++) {
+        for (int i = 0; i < dimensions.size()-1; i++) {
             int size1 = dimensions.get(i);
             int size2 = dimensions.get(i+1);
             double std = Math.sqrt(2f/(size1+size2));
