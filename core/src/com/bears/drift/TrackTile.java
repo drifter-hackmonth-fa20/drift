@@ -79,4 +79,68 @@ public class TrackTile extends Tile{
         } else
             return (float)(7*size/8) - (float)(Math.sqrt((size-x)*(size-x)+y*y));
     }
+
+    public float distanceTraveled(float x, float y) {
+        String s = getID();
+        int centerX;
+        int centerY;
+        float radians;
+        if (s.equals("SN")) {
+            return y;
+        } else if (s.equals("NS")) {
+            return 280-y;
+        } else if (s.equals("WE")) {
+            return x;
+        } else if (s.equals("EW")) {
+            return 280-x;
+        } else if (s.equals("SW")) {
+            centerX = 0;
+            centerY = 0;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians = (x - centerX) / radius;
+            return (float) (radians / (Math.PI/2)) * 280;
+        } else if (s.equals("WS")) {
+            centerX = 0;
+            centerY = 0;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians = (x - centerX) / radius;
+            return (float) (((Math.PI/2)-radians) / (Math.PI/2)) * 280;
+        } else if (s.equals("SE")) {
+            centerX = 280;
+            centerY = 0;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians = (y - centerY) / radius;
+            return (float) ((Math.PI/2 - (radians-(Math.PI/2))) / (Math.PI/2)) * 280;
+        } else if (s.equals("ES")) {
+            centerX = 280;
+            centerY = 0;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians = (y - centerY) / radius;
+            return (float) ((radians-(Math.PI/2)) / (Math.PI/2)) * 280;
+        } else if (s.equals("NE")) {
+            centerX = 280;
+            centerY = 280;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians  = (x - centerX) / radius;
+            return (float) ((radians + Math.PI) / (Math.PI/2)) * 280;
+        } else if (s.equals("EN")) {
+            centerX = 280;
+            centerY = 280;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians  = (x - centerX) / radius;
+            return (float) (((Math.PI/2)-(radians + Math.PI)) / (Math.PI/2)) * 280;
+        } else if (s.equals("NW")) {
+            centerX = 0;
+            centerY = 280;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians  = (x - centerX) / radius;
+            return (float) ((Math.PI/2) - (radians - ((3*Math.PI)/2)) / (Math.PI/2)) * 280;
+        } else if (s.equals("WN")) {
+            centerX = 0;
+            centerY = 280;
+            float radius = (float)(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
+            radians  = (x - centerX) / radius;
+            return (float) (((radians - ((3*Math.PI)/2))) / (Math.PI/2)) * 280;
+        }
+    }
 }
