@@ -1,7 +1,7 @@
 package com.bears.drift;
 
 public class Constants {
-    public static final boolean RANDOMIZE = false;
+    public static final boolean RANDOMIZE = true;
     static float TIME_STEP = 1/60f;
     static double POWER = 5;
     static double TURNSPEED = .2;

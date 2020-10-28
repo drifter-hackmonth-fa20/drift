@@ -32,7 +32,7 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(9); dim.add(128); dim.add(128); dim.add(128); dim.add(128); dim.add(4);
+        dim.add(9); dim.add(128); dim.add(128); dim.add(128); dim.add(128); dim.add(2);
         this.net = new NeuralNet(dim, true, "sigmoid");
     }
 
@@ -90,9 +90,9 @@ public class Car extends Sprite {
                 angularVelocity -= Constants.TURNSPEED;
             }
         } else {
-            if (prediction.getEntry(0, 2) > 0.5) {
+            if (prediction.getEntry(0, 1) > 0.6) {
                 angularVelocity += Constants.TURNSPEED;
-            } else if (prediction.getEntry(0, 3) > 0.5) {
+            } else if (prediction.getEntry(0, 1) < 0.4) {
                 angularVelocity -= Constants.TURNSPEED;
             }
         }
@@ -109,10 +109,10 @@ public class Car extends Sprite {
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         } else {
-            if (prediction.getEntry(0, 0) > 0.5) {
+            if (prediction.getEntry(0, 0) > 0.75) {
                 velocityX -= Math.sin(Math.toRadians(getRotation())) * Constants.POWER;
                 velocityY += Math.cos(Math.toRadians(getRotation())) * Constants.POWER;
-            } else if (prediction.getEntry(0, 1) > 0.5){
+            } else if (prediction.getEntry(0, 0) < 0.25){
                 velocityX += Math.sin(Math.toRadians(getRotation())) * Constants.POWER/4;
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
@@ -145,7 +145,7 @@ public class Car extends Sprite {
     public static double[] normalize(double[] data) {
         double[] norm = new double[data.length];
         for (int i = 0; i < data.length; i++) {
-            norm[i] = ((data[i] - Constants.INPUTMIN)/(Constants.INPUTMAX - Constants.INPUTMIN)-0.5)*10;
+            norm[i] = ((data[i] - Constants.INPUTMIN)/(Constants.INPUTMAX - Constants.INPUTMIN)-0.5)*50;
         }
         return norm;
     }

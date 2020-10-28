@@ -109,10 +109,8 @@ public class Race {
         float frameTime = Math.min(deltaTime, 0.25f);
         accumulator += frameTime;
         while (accumulator >= Constants.TIME_STEP) {
-            for (int i = 0; i < Constants.SPEED; i++) {
-                for (Car car: cars) {
-                    car.update(Constants.TIME_STEP);
-                }
+            for (Car car: cars) {
+                for (int i = 0; i < Constants.SPEED; i++) car.update(Constants.TIME_STEP);
             }
             accumulator -= Constants.TIME_STEP;
         }
