@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Car extends Sprite {
     final GameScreen screen;
@@ -100,16 +101,31 @@ public class Car extends Sprite {
 
     private void makePrediction() {
         double[][] data = new double[1][8];
-        data[0][0] = getCenterX()%280;
-        data[0][1] = getCenterY()%280;
-        data[0][2] = velocityX;
-        data[0][3] = velocityY;
-        data[0][4] = getRotation();
-        data[0][5] = angularVelocity;
-        data[0][6] = distanceToCurve1();
-        data[0][7] = distanceToCurve2();
+        double[] predictions = new double[]{
+                getCenterX()%280-140, getCenterY()%280-140,
+                velocityX, velocityY,
+                getRotation()%360-180, angularVelocity,
+                distanceToCurve1(), distanceToCurve2()
+        };
+        predictions = normalize(predictions);
+        data[0][0] = predictions[0];
+        data[0][1] = predictions[1];
+        data[0][2] = predictions[2];
+        data[0][3] = predictions[3];
+        data[0][4] = predictions[4];
+        data[0][5] = predictions[5];
+        data[0][6] = predictions[6];
+        data[0][7] = predictions[7];
         RealMatrix inputs = MatrixUtils.createRealMatrix(data);
         prediction = net.predict(inputs);
+    }
+
+    public static double[] normalize(double[] data) {
+        double[] norm = new double[data.length];
+        for (int i = 0; i < data.length; i++) {
+            norm[i] = ((data[i] - Constants.INPUTMIN)/(Constants.INPUTMAX - Constants.INPUTMIN)-0.5)*20;
+        }
+        return norm;
     }
 
     public float getCenterX() {

@@ -1,9 +1,8 @@
 package com.bears.drift;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import java.util.ArrayList;
 
@@ -13,6 +12,7 @@ public class Race {
     ArrayList<Car> cars;
     float elapsedTime;
     boolean running;
+    boolean over;
 
     public Race(GameScreen screen, int numCars, boolean playerCar) {
         this.screen = screen;
@@ -31,6 +31,7 @@ public class Race {
         randomizeTrack();
         elapsedTime = 0;
         running = true;
+        over = false;
     }
 
     public void pause() {
@@ -39,9 +40,20 @@ public class Race {
 
     public void end() {
         running = false;
+        over = true;
     }
 
-    public void randomizeTrack() {
+    public void reset() {
+        elapsedTime = 0;
+        over = false;
+        resetCars(track.startx, track.starty, track.startAngle);
+    }
+
+    private void evolve() {
+
+    }
+
+    private void randomizeTrack() {
         track = new Track(screen.game);
         resetCars(track.startx, track.starty, track.startAngle);
     }
@@ -55,6 +67,15 @@ public class Race {
         for (Car car: cars) {
             car.render();
         }
+    }
+
+    private static int sampleExponential() {
+        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/20f);
+        int s = (int) e.sample();
+        while (s > Constants.NUMCARS) {
+            s = (int) e.sample();
+        }
+        return s;
     }
 
     private float accumulator = 0;

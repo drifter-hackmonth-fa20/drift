@@ -23,7 +23,7 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera(game.screenSizeX, game.screenSizeY);
         stage = new Stage(new FitViewport(game.screenSizeX, game.screenSizeY, camera));
-        race = new Race(this, 100, true);
+        race = new Race(this, Constants.NUMCARS, true);
     }
 
     @Override
@@ -36,6 +36,10 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             race.begin();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            race.reset();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            race.pause();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) Constants.SPEED = 1;
@@ -48,7 +52,8 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) Constants.SPEED = 8;
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) Constants.SPEED = 9;
 
-        if (race.elapsedTime>Constants.RACESECONDS) {
+        if (race.elapsedTime>Constants.RACESECONDS && !race.over) {
+            System.out.println("end");
             race.end();
         }
 

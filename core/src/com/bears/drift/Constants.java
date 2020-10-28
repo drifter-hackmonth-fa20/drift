@@ -7,4 +7,7 @@ public class Constants {
     static double VELOCITYFRICTION = .3;
     static int SPEED = 1;
     static int RACESECONDS = 10;
+    static int INPUTMAX = 280;
+    static int INPUTMIN = -280;
+    static int NUMCARS = 100;
 }
