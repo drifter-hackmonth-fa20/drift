@@ -135,7 +135,7 @@ public class Track {
         else randomDir = (int)(Math.random()*4);
         for (int k = randomDir, counter = 0; counter < 4; k = (k+1)%4, counter++) {
             if (k == entry) continue;
-            tiles[i][j] = new TrackTile(entry, k, order);
+            tiles[i][j] = new TrackTile(game, entry, k, order);
             dfs(i+dirY[k], j + dirX[k], (k + 2)%4, order + 1);
             if (works || failed) {
                 if (order>length) length = order;

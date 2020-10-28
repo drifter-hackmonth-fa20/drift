@@ -61,7 +61,8 @@ public class Race {
         });
 
         ArrayList<Car> newCars = new ArrayList<>();
-        for (int i = 0; i < Constants.NUMCARS; i++) {
+        newCars.add(cars.get(0));
+        for (int i = 1; i < Constants.NUMCARS; i++) {
             Car parent1 = cars.get(sampleExponential());
             Car parent2 = cars.get(sampleExponential());
             Car newCar = new Car(screen, parent1.getTexture(), false);
@@ -72,7 +73,7 @@ public class Race {
     }
 
     private void randomizeTrack() {
-        track.randomizeTiles();
+        if (Constants.RANDOMIZE) track.randomizeTiles();
         resetCars(track.startx, track.starty, track.startAngle);
     }
 

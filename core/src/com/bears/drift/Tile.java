@@ -7,6 +7,7 @@ public abstract class Tile {
     Texture texture;
     int size;
     boolean isTrack;
+    int order;
 
     abstract void fun();
 

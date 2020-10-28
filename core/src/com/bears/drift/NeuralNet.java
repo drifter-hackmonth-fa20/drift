@@ -78,7 +78,8 @@ public class NeuralNet {
     }
 
     public NeuralNet mate(NeuralNet other) {
-        NeuralNet child = new NeuralNet(this.dimensions, this.useBias, this.output);
+        final NeuralNet child = new NeuralNet(this.dimensions, this.useBias, this.output);
+        final NeuralNet finalOther = other;
         for (int i = 0; i < child.layers.size(); i++) {
 //            RealMatrix pass_on = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
 //            RealMatrix pass_on_opp = MatrixUtils.createRealMatrix(1, child.layers.get(i).getColumnDimension());
@@ -91,14 +92,32 @@ public class NeuralNet {
 //            System.out.println(this.layers.get(i).getRowDimension() + "," + this.layers.get(i).getColumnDimension());
 //            child.layers.set(i, pass_on.multiply(this.layers.get(i)).add(pass_on_opp.multiply(other.layers.get(i))));
 //            child.biases.set(i, pass_on.multiply(this.biases.get(i)).add(pass_on_opp.multiply(other.biases.get(i))));
-            if (Math.random()<0.5) {
-                child.layers.set(i, this.layers.get(i));
-                child.biases.set(i, this.biases.get(i));
-            } else {
-                child.layers.set(i, other.layers.get(i));
-                child.biases.set(i, other.biases.get(i));
-            }
 
+            final int finalI = i;
+            child.layers.get(i).walkInOptimizedOrder(new RealMatrixChangingVisitor() {
+                @Override
+                public void start(int rows, int columns, int startRow,
+                                  int endRow, int startColumn, int endColumn) {
+
+                }
+
+                @Override
+                public double visit(int row, int column, double value) {
+                    boolean test = Math.random() < 0.5;
+                    if (test) {
+                        child.biases.get(finalI).setEntry(0, column, NeuralNet.this.biases.get(finalI).getEntry(0, column));
+                        return NeuralNet.this.layers.get(finalI).getEntry(row, column);
+                    } else {
+                        child.biases.get(finalI).setEntry(0, column, finalOther.biases.get(finalI).getEntry(0, column));
+                        return finalOther.layers.get(finalI).getEntry(row, column);
+                    }
+                }
+
+                @Override
+                public double end() {
+                    return 0;
+                }
+            });
         }
         child.mutate();
         return child;
@@ -106,13 +125,15 @@ public class NeuralNet {
 
     private void mutate() {
         float stdev = (float) 0.03;
+        NormalDistribution dist = new NormalDistribution(0, stdev);
         for (int i = 0; i < this.layers.size(); i++) {
-            NormalDistribution dist = new NormalDistribution(0, stdev);
-            RealMatrix normalL = RandomNormalMatrix(dist, this.layers.get(i).getRowDimension(), this.layers.get(i).getColumnDimension());
-            RealMatrix normalB = RandomNormalMatrix(dist, this.biases.get(i).getRowDimension(), this.biases.get(i).getColumnDimension());
-            this.layers.set(i, this.layers.get(i).add(normalL));
+            RealMatrix layer = this.layers.get(i);
+            RealMatrix bias = this.biases.get(i);
+            RealMatrix normalL = RandomNormalMatrix(dist, layer.getRowDimension(), layer.getColumnDimension());
+            RealMatrix normalB = RandomNormalMatrix(dist, bias.getRowDimension(), bias.getColumnDimension());
+            this.layers.set(i, layer.add(normalL));
             if (this.useBias) {
-                this.biases.set(i, this.biases.get(i).add(normalB));
+                this.biases.set(i, bias.add(normalB));
             }
         }
     }

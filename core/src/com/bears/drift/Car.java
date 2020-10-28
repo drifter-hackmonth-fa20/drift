@@ -32,7 +32,7 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(9); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(4);
+        dim.add(9); dim.add(128); dim.add(128); dim.add(128); dim.add(128); dim.add(4);
         this.net = new NeuralNet(dim, true, "sigmoid");
     }
 
@@ -41,8 +41,15 @@ public class Car extends Sprite {
     }
 
     public void update(float delta) {
+        if (dead) return;
         getTile();
-        int startingSquare = screen.race.track.getTileOrder(getCenterX(), getCenterY());
+        if (distanceToCurve1()<=0
+                || distanceToCurve2()<=0) {
+            dead = true;
+            return;
+        }
+
+        int startingSquare = tile.order;
 
         makePrediction();
         updateAngularVelocity();
@@ -52,12 +59,7 @@ public class Car extends Sprite {
         float deltaX = (float) (velocityX * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
         float deltaY =  (float) (velocityY * (frictionFactor - 1)/Math.log(Constants.VELOCITYFRICTION));
 
-        if (distanceToCurve1()>=0
-                && distanceToCurve2()>=0) {
-            translate(deltaX, deltaY);
-        } else {
-            dead = true;
-        }
+        translate(deltaX, deltaY);
         velocityX *= frictionFactor;
         velocityY *= frictionFactor;
 
@@ -67,7 +69,9 @@ public class Car extends Sprite {
         rotate((float) Math.toDegrees(angularVelocity * (frictionFactor - 1)/Math.log(friction)));
         angularVelocity *= frictionFactor;
 
-        updateTilesTraversed(startingSquare, screen.race.track.getTileOrder(getCenterX(), getCenterY()));
+        getTile();
+        updateTilesTraversed(startingSquare, tile.order);
+
     }
 
     private void updateTilesTraversed(int startingSquare, int endingSquare) {

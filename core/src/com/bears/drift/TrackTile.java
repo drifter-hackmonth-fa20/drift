@@ -6,10 +6,10 @@ public class TrackTile extends Tile{
     int entrance; // Side the car enters the track
     int exit; // Side the car exits
     String[] dir = {"S", "W", "N", "E"};
-    int order;
+    Drift game;
 
-
-    public TrackTile(int entrance, int exit, int order) {
+    public TrackTile(Drift game, int entrance, int exit, int order) {
+        this.game = game;
         this.size = 280;
         this.entrance = entrance;
         this.exit = exit;
@@ -23,17 +23,17 @@ public class TrackTile extends Tile{
     private void loadTexture() {
         String s = getID();
         if (s.equals("SN") || s.equals("NS")) {
-            this.texture = new Texture("vertical-tile.png");
+            this.texture = game.getTexture("vertical-tile.png");
         } else if (s.equals("EW") || s.equals("WE")) {
-            this.texture = new Texture("horizontal-tile.png");
+            this.texture = game.getTexture("horizontal-tile.png");
         } else if (s.equals("SW") || s.equals("WS")) {
-            this.texture = new Texture("bottomleft-tile.png");
+            this.texture = game.getTexture("bottomleft-tile.png");
         } else if (s.equals("WN") || s.equals("NW")) {
-            this.texture = new Texture("topleft-tile.png");
+            this.texture = game.getTexture("topleft-tile.png");
         } else if (s.equals("NE") || s.equals("EN")) {
-            this.texture = new Texture("topright-tile.png");
+            this.texture = game.getTexture("topright-tile.png");
         } else
-            this.texture = new Texture("bottomright-tile.png");
+            this.texture = game.getTexture("bottomright-tile.png");
     }
 
     /** Generate a unique id based on the entrance and exit side. */
