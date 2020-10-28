@@ -6,12 +6,16 @@ public class TrackTile extends Tile{
     int entrance; // Side the car enters the track
     int exit; // Side the car exits
     String[] dir = {"S", "W", "N", "E"};
+    int order;
 
-    public TrackTile(int entrance, int exit) {
+
+    public TrackTile(int entrance, int exit, int order) {
         this.size = 280;
         this.entrance = entrance;
         this.exit = exit;
         this.visible = true;
+        this.order = order;
+        this.isTrack = true;
         loadTexture();
     }
 

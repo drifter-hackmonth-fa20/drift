@@ -11,6 +11,7 @@ public class BlankTile extends Tile{
         pixmap.fillRectangle(0, 0, this.size, this.size);
         this.texture = new Texture(pixmap);
         this.visible = true;
+        this.isTrack = false;
     }
 
     public void fun() {

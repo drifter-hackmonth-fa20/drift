@@ -51,7 +51,7 @@ public class Track {
             works = false; failed = false; depth = 0;
             int starti = (int)(Math.random()*6);
             int startj = (int)(Math.random()*6);
-            dfs(starti, startj, (int)(Math.random()*4));
+            dfs(starti, startj, (int)(Math.random()*4), 0);
         }
 
         for (int i = 0; i < 6; i++) {
@@ -65,7 +65,9 @@ public class Track {
                     firstTileExit = ((TrackTile) tiles[i][j]).exit;
                     firstTile = false;
                 }
+                System.out.print(getTileOrder(j*280, i*280)+" ");
             }
+            System.out.println();
         }
 
         startx = 150 + firstTileX*280;
@@ -108,7 +110,7 @@ public class Track {
     private int depth = 0;
     private boolean failed;
 
-    private void dfs(int i, int j, int entry) {
+    private void dfs(int i, int j, int entry, int order) {
         depth++;
         if (depth > 75) {
             failed = true;
@@ -122,8 +124,8 @@ public class Track {
         int randomDir = (int)(Math.random()*4);
         for (int k = randomDir, counter = 0; counter < 4; k = (k+1)%4, counter++) {
             if (k == entry) continue;
-            tiles[i][j] = new TrackTile(entry, k);
-            dfs(i+dirY[k], j + dirX[k], (k + 2)%4);
+            tiles[i][j] = new TrackTile(entry, k, order);
+            dfs(i+dirY[k], j + dirX[k], (k + 2)%4, order + 1);
             if (works || failed) {
                 break;
             }
@@ -149,5 +151,10 @@ public class Track {
 
     public int getTileNum(float x, float y) {
         return ((int)x)/280*6 + ((int)y)/280;
+    }
+
+    public int getTileOrder(float x, float y) {
+        if (!tiles[(int)(y/280)][(int)(x/280)].isTrack) return -1;
+        else return ((TrackTile)(tiles[(int)(y/280)][(int)(x/280)])).order;
     }
 }

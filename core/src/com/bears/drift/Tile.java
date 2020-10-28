@@ -6,6 +6,7 @@ public abstract class Tile {
     Boolean visible;
     Texture texture;
     int size;
+    boolean isTrack;
 
     abstract void fun();
 
