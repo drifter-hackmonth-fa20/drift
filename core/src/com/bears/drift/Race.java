@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class Race {
@@ -66,6 +67,7 @@ public class Race {
             Car parent1 = cars.get(sampleExponential());
             Car parent2 = cars.get(sampleExponential());
             Car newCar = new Car(screen, parent1.getTexture(), false);
+            newCar.setColor(parent1.getColor());
             newCar.net = parent1.net.mate(parent2.net);
             newCars.add(newCar);
         }
@@ -125,11 +127,13 @@ public class Race {
     }
 
     private void addAutomatedCars(int numCars) {
+        Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
+        pixmap.setColor(1,1,1,.9f);
+        pixmap.fillRectangle(2, 0, 6, 10);
+        Texture texture = new Texture(pixmap);
         for (int i = 0; i < numCars; i++) {
-            Pixmap pixmap = new Pixmap(10, 10, Pixmap.Format.RGBA8888);
-            pixmap.setColor((float) Math.random(), (float) Math.random(), (float) Math.random(), .9f);
-            pixmap.fillRectangle(2, 0, 6, 10);
-            Car car = new Car(screen, new Texture(pixmap), false);
+            Car car = new Car(screen, texture, false);
+            car.setColor((float) Math.random(), (float) Math.random(), (float) Math.random(), .9f);
             cars.add(car);
         }
     }

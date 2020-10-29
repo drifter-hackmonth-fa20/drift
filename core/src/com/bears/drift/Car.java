@@ -21,6 +21,7 @@ public class Car extends Sprite {
     public int tilesTraversed;
     public Tile tile;
     public boolean dead;
+    public float[] linesOfSight;
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
@@ -32,8 +33,9 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(9); dim.add(128); dim.add(128); dim.add(128); dim.add(128); dim.add(2);
+        dim.add(9); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(2);
         this.net = new NeuralNet(dim, true, "sigmoid");
+        linesOfSight = new float[5];
     }
 
     public void render() {
@@ -50,6 +52,8 @@ public class Car extends Sprite {
         }
 
         int startingSquare = tile.order;
+
+        updateLinesOfSight();
 
         makePrediction();
         updateAngularVelocity();
@@ -122,11 +126,9 @@ public class Car extends Sprite {
     private void makePrediction() {
         double[][] data = new double[1][9];
         double[] predictions = new double[]{
-                getCenterX()%280-140, getCenterY()%280-140,
                 velocityX, velocityY,
-                getRotation()%360-180, angularVelocity,
-                180-distanceToCurve1(), 180-distanceToCurve2(),
-                tile.getNum() //might be causing track memorization
+                0, angularVelocity,
+                linesOfSight[0], linesOfSight[1], linesOfSight[2], linesOfSight[3], linesOfSight[4]
         };
         predictions = normalize(predictions);
         data[0][0] = predictions[0];
@@ -186,5 +188,28 @@ public class Car extends Sprite {
 
     public int getScore() {
         return (int) (tilesTraversed*280+tile.distanceTraveled(getCenterX()%280, getCenterY()%280));
+    }
+
+    private float getLineOfSight(double deltaX, double deltaY) {
+        float x = getCenterX();
+        float y = getCenterY();
+        float distance1 = screen.race.track.getTile(x, y).distanceToCurve1(x%280, y%280);
+        float distance2 = screen.race.track.getTile(x, y).distanceToCurve2(x%280, y%280);
+        while (distance1 > 0 && distance2 > 0) {
+            x += deltaX;
+            y += deltaY;
+            distance1 = screen.race.track.getTile(x, y).distanceToCurve1(x%280, y%280);
+            distance2 = screen.race.track.getTile(x, y).distanceToCurve2(x%280, y%280);
+        }
+        return (float) Math.sqrt(Math.pow(x-getCenterX(), 2) + Math.pow(y-getCenterY(), 2));
+    }
+
+    public void updateLinesOfSight() {
+        double rad = Math.toRadians(getRotation());
+        linesOfSight[0] = getLineOfSight(Math.sin(rad+Math.PI/2)*10, Math.cos(rad+Math.PI/2)*10);
+        linesOfSight[1] = getLineOfSight(Math.sin(rad+Math.PI/4)*10, Math.cos(rad+Math.PI/4)*10);
+        linesOfSight[2] = getLineOfSight(Math.sin(rad)*10, Math.cos(rad)*10);
+        linesOfSight[3] = getLineOfSight(Math.sin(rad-Math.PI/4)*10, Math.cos(rad-Math.PI/4)*10);
+        linesOfSight[4] = getLineOfSight(Math.sin(rad-Math.PI/2)*10, Math.cos(rad-Math.PI/2)*10);
     }
 }

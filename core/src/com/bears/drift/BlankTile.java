@@ -4,12 +4,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
 public class BlankTile extends Tile{
-    public BlankTile() {
-        this.size = 280;
-        Pixmap pixmap = new Pixmap(this.size, this.size, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1,1,1,1);
-        pixmap.fillRectangle(0, 0, this.size, this.size);
-        this.texture = new Texture(pixmap);
+    public BlankTile(Drift game) {
+        this.texture = game.getTexture("badlogic.jpg");
         this.visible = true;
         this.isTrack = false;
     }

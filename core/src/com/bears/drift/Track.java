@@ -95,7 +95,7 @@ public class Track {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (tiles[i][j] == null) {
-                    tiles[i][j] = new BlankTile();
+                    tiles[i][j] = new BlankTile(game);
                 } else if (firstTile) {
                     firstTileX = startj;
                     firstTileY = starti;

@@ -124,7 +124,7 @@ public class NeuralNet {
     }
 
     private void mutate() {
-        float stdev = (float) 0.03;
+        float stdev = (float) 0.005;
         NormalDistribution dist = new NormalDistribution(0, stdev);
         for (int i = 0; i < this.layers.size(); i++) {
             RealMatrix layer = this.layers.get(i);

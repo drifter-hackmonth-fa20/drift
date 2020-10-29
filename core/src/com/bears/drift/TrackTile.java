@@ -42,7 +42,14 @@ public class TrackTile extends Tile{
     }
 
     public int getNum() {
-        return entrance*10+exit*3;
+        String s = getID();
+        if (s.equals("SN") || s.equals("NS") || s.equals("EW") || s.equals("WE")) {
+            return 0;
+        } else if (s.equals("SW") || s.equals("WN") || s.equals("NE") || s.equals("ES")) {
+            return -1;
+        } else if (s.equals("SE") || s.equals("EN") || s.equals("NW") || s.equals("WS"))
+            return 1;
+        return 0;
     }
 
     @Override
