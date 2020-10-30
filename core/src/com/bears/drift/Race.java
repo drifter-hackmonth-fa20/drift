@@ -60,16 +60,17 @@ public class Race {
                 return t1.getScore() - car.getScore();
             }
         });
-
         ArrayList<Car> newCars = new ArrayList<>();
         newCars.add(cars.get(0));
+        int num = 0;
         for (int i = 1; i < Constants.NUMCARS; i++) {
-            Car parent1 = cars.get(sampleExponential());
+            Car parent1 = cars.get(num);
             Car parent2 = cars.get(sampleExponential());
             Car newCar = new Car(screen, parent1.getTexture(), false);
             newCar.setColor(parent1.getColor());
             newCar.net = parent1.net.mate(parent2.net);
             newCars.add(newCar);
+            num = (num+1)%(Constants.NUMCARS/10);
         }
         cars = newCars;
     }
@@ -88,6 +89,7 @@ public class Race {
         }
         track.render();
         dead = true;
+//        if (!cars.get(0).dead) System.out.println(cars.get(0).inputs);
         for (Car car: cars) {
             car.render();
             if (!car.dead) {
@@ -97,9 +99,9 @@ public class Race {
     }
 
     private static int sampleExponential() {
-        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/15f);
+        ExponentialDistribution e = new ExponentialDistribution(Constants.NUMCARS/5f);
         int s = (int) e.sample();
-        while (s > Constants.NUMCARS) {
+        while (s >= Constants.NUMCARS) {
             s = (int) e.sample();
         }
         return s;

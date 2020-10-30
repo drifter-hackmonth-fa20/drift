@@ -9,8 +9,6 @@ public abstract class Tile {
     boolean isTrack;
     int order;
 
-    abstract void fun();
-
     abstract float distanceToCurve1(float x, float y);
     abstract float distanceToCurve2(float x, float y);
     abstract float distanceTraveled(float x, float y);

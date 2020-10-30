@@ -104,7 +104,7 @@ public class NeuralNet {
                 @Override
                 public double visit(int row, int column, double value) {
                     boolean test = Math.random() < 0.5;
-                    if (test) {
+                    if (true) {
                         child.biases.get(finalI).setEntry(0, column, NeuralNet.this.biases.get(finalI).getEntry(0, column));
                         return NeuralNet.this.layers.get(finalI).getEntry(row, column);
                     } else {
@@ -124,7 +124,7 @@ public class NeuralNet {
     }
 
     private void mutate() {
-        float stdev = (float) 0.005;
+        float stdev = (float) Constants.MUTATIONRATE;
         NormalDistribution dist = new NormalDistribution(0, stdev);
         for (int i = 0; i < this.layers.size(); i++) {
             RealMatrix layer = this.layers.get(i);

@@ -53,9 +53,6 @@ public class TrackTile extends Tile{
     }
 
     @Override
-    void fun() {}
-
-    @Override
     /** Return the distance from the car to the inner side of the track. */
     public float distanceToCurve1(float x, float y) {
         String s = getID();

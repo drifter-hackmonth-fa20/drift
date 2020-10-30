@@ -17,11 +17,12 @@ public class Car extends Sprite {
     private float angularVelocity;
     private boolean controllable;
     public NeuralNet net;
-    private RealMatrix prediction;
+    public RealMatrix prediction;
     public int tilesTraversed;
     public Tile tile;
     public boolean dead;
     public float[] linesOfSight;
+    RealMatrix inputs;
 
     public Car(final GameScreen screen, Texture texture, boolean controllable) {
         super(texture);
@@ -33,7 +34,7 @@ public class Car extends Sprite {
         this.velocityY = 0;
         this.controllable = controllable;
         ArrayList<Integer> dim = new ArrayList<>();
-        dim.add(9); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(2);
+        dim.add(8); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(64); dim.add(4);
         this.net = new NeuralNet(dim, true, "sigmoid");
         linesOfSight = new float[5];
     }
@@ -94,9 +95,9 @@ public class Car extends Sprite {
                 angularVelocity -= Constants.TURNSPEED;
             }
         } else {
-            if (prediction.getEntry(0, 1) > 0.6) {
+            if (prediction.getEntry(0, 2) > 0.5) {
                 angularVelocity += Constants.TURNSPEED;
-            } else if (prediction.getEntry(0, 1) < 0.4) {
+            } else if (prediction.getEntry(0, 3) > 0.5) {
                 angularVelocity -= Constants.TURNSPEED;
             }
         }
@@ -113,10 +114,10 @@ public class Car extends Sprite {
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
         } else {
-            if (prediction.getEntry(0, 0) > 0.75) {
+            if (prediction.getEntry(0, 0) > 0.5) {
                 velocityX -= Math.sin(Math.toRadians(getRotation())) * Constants.POWER;
                 velocityY += Math.cos(Math.toRadians(getRotation())) * Constants.POWER;
-            } else if (prediction.getEntry(0, 0) < 0.25){
+            } else if (prediction.getEntry(0, 1) > 0.5){
                 velocityX += Math.sin(Math.toRadians(getRotation())) * Constants.POWER/4;
                 velocityY -= Math.cos(Math.toRadians(getRotation())) * Constants.POWER/4;
             }
@@ -124,13 +125,13 @@ public class Car extends Sprite {
     }
 
     private void makePrediction() {
-        double[][] data = new double[1][9];
+        double[][] data = new double[1][8];
         double[] predictions = new double[]{
                 velocityX, velocityY,
-                0, angularVelocity,
+                angularVelocity,
                 linesOfSight[0], linesOfSight[1], linesOfSight[2], linesOfSight[3], linesOfSight[4]
         };
-        predictions = normalize(predictions);
+//        predictions = normalize(predictions);
         data[0][0] = predictions[0];
         data[0][1] = predictions[1];
         data[0][2] = predictions[2];
@@ -139,8 +140,7 @@ public class Car extends Sprite {
         data[0][5] = predictions[5];
         data[0][6] = predictions[6];
         data[0][7] = predictions[7];
-        data[0][8] = predictions[8];
-        RealMatrix inputs = MatrixUtils.createRealMatrix(data);
+        inputs = MatrixUtils.createRealMatrix(data);
         prediction = net.predict(inputs);
     }
 
@@ -190,14 +190,14 @@ public class Car extends Sprite {
         return (int) (tilesTraversed*280+tile.distanceTraveled(getCenterX()%280, getCenterY()%280));
     }
 
-    private float getLineOfSight(double deltaX, double deltaY) {
+    private float getLineOfSight(double centerRad, double offsetRad) {
         float x = getCenterX();
         float y = getCenterY();
         float distance1 = screen.race.track.getTile(x, y).distanceToCurve1(x%280, y%280);
         float distance2 = screen.race.track.getTile(x, y).distanceToCurve2(x%280, y%280);
         while (distance1 > 0 && distance2 > 0) {
-            x += deltaX;
-            y += deltaY;
+            x -= Math.sin(centerRad+offsetRad)*10;
+            y += Math.cos(centerRad+offsetRad)*10;
             distance1 = screen.race.track.getTile(x, y).distanceToCurve1(x%280, y%280);
             distance2 = screen.race.track.getTile(x, y).distanceToCurve2(x%280, y%280);
         }
@@ -206,10 +206,10 @@ public class Car extends Sprite {
 
     public void updateLinesOfSight() {
         double rad = Math.toRadians(getRotation());
-        linesOfSight[0] = getLineOfSight(Math.sin(rad+Math.PI/2)*10, Math.cos(rad+Math.PI/2)*10);
-        linesOfSight[1] = getLineOfSight(Math.sin(rad+Math.PI/4)*10, Math.cos(rad+Math.PI/4)*10);
-        linesOfSight[2] = getLineOfSight(Math.sin(rad)*10, Math.cos(rad)*10);
-        linesOfSight[3] = getLineOfSight(Math.sin(rad-Math.PI/4)*10, Math.cos(rad-Math.PI/4)*10);
-        linesOfSight[4] = getLineOfSight(Math.sin(rad-Math.PI/2)*10, Math.cos(rad-Math.PI/2)*10);
+        linesOfSight[0] = (int) getLineOfSight(rad, 0);
+        linesOfSight[1] = (int) getLineOfSight(rad, Math.PI/2);
+        linesOfSight[2] = (int) getLineOfSight(rad, -Math.PI/2);
+        linesOfSight[3] = (int) getLineOfSight(rad, Math.PI/4);
+        linesOfSight[4] = (int) getLineOfSight(rad, -Math.PI/4);
     }
 }

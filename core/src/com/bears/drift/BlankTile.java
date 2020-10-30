@@ -10,13 +10,6 @@ public class BlankTile extends Tile{
         this.isTrack = false;
     }
 
-    public void fun() {
-        Pixmap pixmap = new Pixmap(this.size, this.size, Pixmap.Format.RGBA8888);
-        pixmap.setColor((float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random());
-        pixmap.fillRectangle(0, 0, this.size, this.size);
-        this.texture = new Texture(pixmap);
-    }
-
     @Override
     float distanceToCurve1(float x, float y) {return 280;}
 
