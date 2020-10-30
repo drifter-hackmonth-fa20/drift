@@ -39,11 +39,13 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            race.begin();
+            race.end();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             race.reset();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             race.pause();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            Constants.RANDOMIZE = !Constants.RANDOMIZE;
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) Constants.SPEED = 1;
